@@ -80,7 +80,6 @@ Nên dùng khi:
 - Mảng rất lớn. 
 - Không biết kích thước mảng. 
 - Làm việc với dữ liệu stream hoặc unbounded array.    
-### 5.4 Nhận xét
 ### 5.6. Nhận xét
 
 Ưu điểm:
