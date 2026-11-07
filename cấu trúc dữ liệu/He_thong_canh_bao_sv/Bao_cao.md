@@ -1,4 +1,14 @@
-
+# mục lục
+1. Đặt vấn đề
+2. Mục tiêu hệ thống
+3. Bài toán cốt lõi
+4. Dữ liệu sử dụng
+5. Cấu trúc dữ liệu đề xuất
+6. Giải thuật đề xuất
+7. Kiến trúc hệ thống
+8. Quy trình cảnh báo và can thiệp
+9. Đánh giá và đạo đức dữ liệu
+10. Kết luận
 
 
 
