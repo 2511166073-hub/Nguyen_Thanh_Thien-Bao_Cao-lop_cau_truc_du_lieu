@@ -7,7 +7,7 @@ MSSV: 2511166073
 Lớp: CA3 thứ 7
 
 ## Danh mục bài nộp
-1. 05 thuật toán tìm kiếm
+1. 05 thuật toán tìm kiếm ( với Linear Search và Binary Search )
 2. Báo cáo hệ thống cảnh báo sớm sinh viên thôi học
 3. Bài toán thực tế
 4. Bài toán chuỗi và ứng dụng đếm biển số xe
