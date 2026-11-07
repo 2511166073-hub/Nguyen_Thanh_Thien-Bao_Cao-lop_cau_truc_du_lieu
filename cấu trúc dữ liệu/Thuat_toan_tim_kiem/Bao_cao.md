@@ -140,7 +140,7 @@ Nhược điểm:
 - Khó hiểu hơn Binary Search.
 - Trong thực tế Python, ít khi cần dùng vì phép chia không phải bottleneck lớn.
 
-## 7. Ternary Search
+
 ## 7. Ternary Search
 
 ### 7.1. Ternary Search là gì?
