@@ -62,7 +62,7 @@ Hệ thống có thể thu thập các nhóm dữ liệu sau:
 
 - Điểm trung bình học kỳ
 - Điểm từng môn
-- Số môn hỏng
+- Số môn rớt
 - Số tín chỉ tích lũy
 - Tiến độ so với chương trình
 - Kết quả rèn luyện
