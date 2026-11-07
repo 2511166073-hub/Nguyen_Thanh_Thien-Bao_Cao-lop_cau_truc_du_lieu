@@ -92,7 +92,7 @@ Nhược điểm:
 
 - Vẫn yêu cầu mảng đã sắp xếp.
 - Trong trường hợp mảng nhỏ, có thể không nhanh hơn Binary Search đáng kể.
-## 6. Fibonacci Search
+
 ## 6. Fibonacci Search
 
 ### 6.1. Fibonacci Search là gì?
