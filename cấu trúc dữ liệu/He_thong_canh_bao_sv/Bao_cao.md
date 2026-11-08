@@ -184,6 +184,10 @@ Ví dụ mối quan hệ:
 
 Từ dữ liệu quan hệ, hệ thống cần tạo ra một bảng đặc trưng để phục vụ tính toán rủi ro.
 
+Ma trận đặc trưng có kích thước N × F.
+Trong đó:
+- N là số sinh viên.
+- F là số đặc trưng rủi ro.
 Mỗi dòng đại diện cho một sinh viên trong một học kỳ.  
 Mỗi cột đại diện cho một đặc trưng rủi ro.
 
@@ -199,7 +203,17 @@ Ví dụ các đặc trưng:
 | Tiến độ tín chỉ | So với yêu cầu chương trình |
 | Số ngày không liên hệ cố vấn | Mức độ kết nối với hệ thống hỗ trợ |
 
+ví dụ: 
+feature_matrix = [
+    # MSSV, GPA, failed, absent, debt, activity, progress
+    ["SV001", 3.2, 0, 0.05, 0,         80, 0.90],
+    ["SV002", 1.8, 4, 0.38, 9000000,   12, 0.40],
+    ["SV003", 2.4, 2, 0.22, 4000000,   30, 0.65],
+]
+
+
 Feature matrix giúp chuyển dữ liệu quản lý thô thành đầu vào phù hợp cho giải thuật tính điểm rủi ro hoặc mô hình học máy.
+
 
 ---
 
