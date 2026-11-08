@@ -195,7 +195,7 @@ Ví dụ các đặc trưng:
 | Số môn rớt | Số học phần không đạt |
 | Tỷ lệ vắng học | Mức độ chuyên cần |
 | Nợ học phí | Áp lực tài chính |
-| Điểm hoạt động | Mức độ tham gia phong trào, câu lạc bộ |
+| Điểm rèn luyện | Mức độ tham gia phong trào, câu lạc bộ |
 | Tiến độ tín chỉ | So với yêu cầu chương trình |
 | Số ngày không liên hệ cố vấn | Mức độ kết nối với hệ thống hỗ trợ |
 
@@ -323,8 +323,8 @@ Ví dụ bộ luật:
 | Tỷ lệ vắng học từ 10% đến 20% | +5 |
 | Nợ học phí trên 8 triệu đồng | +20 |
 | Nợ học phí từ 3 triệu đến 8 triệu đồng | +10 |
-| Điểm hoạt động dưới 20 | +10 |
-| Điểm hoạt động từ 20 đến dưới 40 | +5 |
+| Điểm rèn luyện dưới 20 | +10 |
+| Điểm rèn luyện từ 20 đến dưới 40 | +5 |
 | Tiến độ tín chỉ dưới 50% | +15 |
 | Hơn 90 ngày không liên hệ cố vấn | +10 |
 | Hơn 60 ngày không liên hệ cố vấn | +5 |
@@ -343,7 +343,7 @@ Sinh viên A có:
 - Số môn rớt = 4.
 - Tỷ lệ vắng học = 38%.
 - Nợ học phí = 9 triệu đồng.
-- Điểm hoạt động = 12.
+- Điểm hoạt độn = 12.
 - Tiến độ tín chỉ = 40%.
 - Hơn 90 ngày không liên hệ cố vấn.
 
@@ -354,7 +354,7 @@ GPA dưới 2.0: +30
 Từ 4 môn rớt trở lên: +25
 Vắng học trên 30%: +25
 Nợ học phí trên 8 triệu: +20
-Điểm hoạt động dưới 20: +10
+Điểm rèn luyện dưới 20: +10
 Tiến độ tín chỉ dưới 50%: +15
 Hơn 90 ngày không liên hệ cố vấn: +10
 
@@ -551,7 +551,7 @@ Lý do chính:
 - Có từ 4 môn rớt trở lên
 - Tỷ lệ vắng học trên 30%
 - Nợ học phí trên 8 triệu đồng
-- Điểm hoạt động dưới 20
+- Điểm rèn luyện dưới 20
 - Tiến độ tín chỉ dưới 50%
 - Hơn 90 ngày không liên hệ cố vấn học tập
 
