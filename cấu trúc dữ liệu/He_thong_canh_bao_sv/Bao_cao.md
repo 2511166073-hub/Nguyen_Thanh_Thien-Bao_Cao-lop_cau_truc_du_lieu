@@ -343,7 +343,7 @@ Sinh viên A có:
 - Số môn rớt = 4.
 - Tỷ lệ vắng học = 38%.
 - Nợ học phí = 9 triệu đồng.
-- Điểm hoạt độn = 12.
+- Điểm rèn luyện = 12.
 - Tiến độ tín chỉ = 40%.
 - Hơn 90 ngày không liên hệ cố vấn.
 
