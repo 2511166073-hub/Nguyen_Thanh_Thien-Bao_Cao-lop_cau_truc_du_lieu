@@ -3,17 +3,87 @@
 
 ## Mục lục
 
-1. Đặt vấn đề  
-2. Mục tiêu hệ thống  
-3. Bài toán cốt lõi  
-4. Dữ liệu sử dụng  
-5. Cấu trúc dữ liệu đề xuất  
-6. Giải thuật đề xuất  
-7. Kiến trúc hệ thống  
-8. Quy trình cảnh báo và can thiệp  
-9. Đánh giá và đạo đức dữ liệu  
-10. Kết luận  
-
+1. [Đặt vấn đề](#1-đặt-vấn-đề)
+2. [Mục tiêu hệ thống](#2-mục-tiêu-hệ-thống)
+3. [Bài toán cốt lõi](#3-bài-toán-cốt-lõi)
+   - [3.1. Phát biểu bài toán](#31-phát-biểu-bài-toán)
+   - [3.2. Dữ liệu đầu vào](#32-dữ-liệu-đầu-vào)
+   - [3.3. Dữ liệu đầu ra](#33-dữ-liệu-đầu-ra)
+   - [3.4. Các hướng tiếp cận](#34-các-hướng-tiếp-cận)
+   - [3.5. Phân rã bài toán](#35-phân-rã-bài-toán)
+   - [3.6. Phạm vi của báo cáo](#36-phạm-vi-của-báo-cáo)
+4. [Dữ liệu sử dụng](#4-dữ-liệu-sử-dụng)
+   - [4.1. Thông tin cá nhân](#41-thông-tin-cá-nhân)
+   - [4.2. Dữ liệu học tập](#42-dữ-liệu-học-tập)
+   - [4.3. Dữ liệu chuyên cần](#43-dữ-liệu-chuyên-cần)
+   - [4.4. Dữ liệu tài chính](#44-dữ-liệu-tài-chính)
+   - [4.5. Dữ liệu hành vi và hoạt động](#45-dữ-liệu-hành-vi-và-hoạt-động)
+   - [4.6. Dữ liệu quan hệ xã hội](#46-dữ-liệu-quan-hệ-xã-hội)
+   - [4.7. Dữ liệu sự kiện hỗ trợ và can thiệp](#47-dữ-liệu-sự-kiện-hỗ-trợ-và-can-thiệp)
+   - [4.8. Dữ liệu trạng thái và kết quả của sinh viên](#48-dữ-liệu-trạng-thái-và-kết-quả-của-sinh-viên)
+   - [4.9. Ánh xạ dữ liệu sang cấu trúc xử lý](#49-ánh-xạ-dữ-liệu-sang-cấu-trúc-xử-lý)
+   - [4.10. Ví dụ biểu diễn dữ liệu trong Python](#410-ví-dụ-biểu-diễn-dữ-liệu-trong-python)
+5. [Cấu trúc dữ liệu đề xuất](#5-cấu-trúc-dữ-liệu-đề-xuất)
+   - [5.1. Cơ sở dữ liệu quan hệ](#51-cơ-sở-dữ-liệu-quan-hệ)
+   - [5.2. Bảng băm — tra cứu hồ sơ sinh viên](#52-bảng-băm--tra-cứu-hồ-sơ-sinh-viên)
+   - [5.3. Ma trận đặc trưng — tính điểm rủi ro](#53-ma-trận-đặc-trưng--tính-điểm-rủi-ro)
+   - [5.4. Mảng chuỗi thời gian — phát hiện xu hướng](#54-mảng-chuỗi-thời-gian--phát-hiện-xu-hướng)
+   - [5.5. Đồ thị danh sách kề — phân tích quan hệ xã hội](#55-đồ-thị-danh-sách-kề--phân-tích-quan-hệ-xã-hội)
+   - [5.6. Heap / hàng đợi ưu tiên — cảnh báo](#56-heap--hàng-đợi-ưu-tiên--cảnh-báo)
+   - [5.7. Tập hợp — chống trùng cảnh báo](#57-tập-hợp--chống-trùng-cảnh-báo)
+   - [5.8. Bảng tổng hợp cấu trúc dữ liệu](#58-bảng-tổng-hợp-cấu-trúc-dữ-liệu)
+   - [5.9. Kết luận về cấu trúc dữ liệu](#59-kết-luận-về-cấu-trúc-dữ-liệu)
+6. [Giải thuật đề xuất](#6-giải-thuật-đề-xuất)
+   - [6.1. Giải thuật tính điểm rủi ro bằng luật](#61-giải-thuật-tính-điểm-rủi-ro-bằng-luật)
+   - [6.2. Giải thuật xếp hạng và chọn top-k](#62-giải-thuật-xếp-hạng-và-chọn-top-k-sinh-viên-rủi-ro-cao-nhất)
+   - [6.3. Giải thuật phát hiện xu hướng giảm theo chuỗi thời gian](#63-giải-thuật-phát-hiện-xu-hướng-giảm-theo-chuỗi-thời-gian)
+   - [6.4. Giải thuật phát hiện sinh viên bị cô lập bằng đồ thị](#64-giải-thuật-phát-hiện-sinh-viên-bị-cô-lập-bằng-đồ-thị)
+   - [6.5. Giải thuật cập nhật hàng đợi cảnh báo động](#65-giải-thuật-cập-nhật-hàng-đợi-cảnh-báo-động)
+   - [6.6. Hướng mở rộng: giải thuật học máy](#66-hướng-mở-rộng-giải-thuật-học-máy)
+   - [6.7. Bảng tổng hợp giải thuật đề xuất](#67-bảng-tổng-hợp-giải-thuật-đề-xuất)
+   - [6.8. Quy trình giải thuật tổng thể](#68-quy-trình-giải-thuật-tổng-thể)
+   - [6.9. Đề xuất phạm vi cho báo cáo cá nhân](#69-đề-xuất-phạm-vi-cho-báo-cáo-cá-nhân)
+   - [6.10. Kết luận phần giải thuật](#610-kết-luận-phần-giải-thuật)
+7. [Kiến trúc hệ thống](#7-kiến-trúc-hệ-thống)
+   - [7.1. Nguyên tắc thiết kế](#71-nguyên-tắc-thiết-kế)
+   - [7.2. Sơ đồ kiến trúc tổng thể](#72-sơ-đồ-kiến-trúc-tổng-thể)
+   - [7.3. Mô tả các tầng trong kiến trúc](#73-mô-tả-các-tầng-trong-kiến-trúc)
+   - [7.4. Luồng xử lý chính của hệ thống](#74-luồng-xử-lý-chính-của-hệ-thống)
+   - [7.5. Các module chức năng đề xuất](#75-các-module-chức-năng-đề-xuất)
+   - [7.6. Ánh xạ kiến trúc với cấu trúc dữ liệu và giải thuật](#76-ánh-xạ-kiến-trúc-với-cấu-trúc-dữ-liệu-và-giải-thuật)
+   - [7.7. Kiến trúc cài đặt đề xuất bằng Python](#77-kiến-trúc-cài-đặt-đề-xuất-bằng-python)
+   - [7.8. Kiến trúc đơn giản cho bài cá nhân](#78-kiến-trúc-đơn-giản-cho-bài-cá-nhân)
+   - [7.9. Kết luận phần kiến trúc](#79-kết-luận-phần-kiến-trúc)
+8. [Quy trình cảnh báo và can thiệp](#8-quy-trình-cảnh-báo-và-can-thiệp)
+   - [8.1. Mục tiêu của quy trình](#81-mục-tiêu-của-quy-trình)
+   - [8.2. Nguyên tắc cảnh báo](#82-nguyên-tắc-cảnh-báo)
+   - [8.3. Quy trình tổng thể](#83-quy-trình-tổng-thể)
+   - [8.4. Đầu ra của một cảnh báo](#84-đầu-ra-của-một-cảnh-báo)
+   - [8.5. Thang mức cảnh báo](#85-thang-mức-cảnh-báo)
+   - [8.6. Quy trình tạo cảnh báo](#86-quy-trình-tạo-cảnh-báo)
+   - [8.7. Quy trình xử lý cảnh báo theo mức độ](#87-quy-trình-xử-lý-cảnh-báo-theo-mức-độ)
+   - [8.8. Quy trình can thiệp](#88-quy-trình-can-thiệp)
+   - [8.9. Xác minh nguyên nhân](#89-xác-minh-nguyên-nhân)
+   - [8.10. Đề xuất hành động theo nguyên nhân](#810-đề-xuất-hành-động-theo-nguyên-nhân)
+   - [8.11. Trạng thái của cảnh báo](#811-trạng-thái-của-cảnh-báo)
+   - [8.12. Ghi nhận kết quả can thiệp](#812-ghi-nhận-kết-quả-can-thiệp)
+   - [8.13. Phản hồi để cải thiện hệ thống](#813-phản-hồi-để-cải-thiện-hệ-thống)
+   - [8.14. Đánh giá hiệu quả quy trình](#814-đánh-giá-hiệu-quả-quy-trình)
+   - [8.15. Ánh xạ quy trình với cấu trúc dữ liệu và giải thuật](#815-ánh-xạ-quy-trình-với-cấu-trúc-dữ-liệu-và-giải-thuật)
+   - [8.16. Ví dụ quy trình với một sinh viên](#816-ví-dụ-quy-trình-với-một-sinh-viên)
+   - [8.17. Kết luận phần quy trình cảnh báo và can thiệp](#817-kết-luận-phần-quy-trình-cảnh-báo-và-can-thiệp)
+9. [Đánh giá và đạo đức dữ liệu](#9-đánh-giá-và-đạo-đức-dữ-liệu)
+   - [9.1. Metric đánh giá](#91-metric-đánh-giá)
+   - [9.2. Đạo đức dữ liệu](#92-đạo-đức-dữ-liệu)
+10. [Kết luận](#10-kết-luận)
+    - [10.1. Tóm tắt kết quả của báo cáo](#101-tóm-tắt-kết-quả-của-báo-cáo)
+    - [10.2. Các cấu trúc dữ liệu đã đề xuất](#102-các-cấu-trúc-dữ-liệu-đã-đề-xuất)
+    - [10.3. Các giải thuật đã đề xuất](#103-các-giải-thuật-đã-đề-xuất)
+    - [10.4. Quy trình cảnh báo và can thiệp](#104-quy-trình-cảnh-báo-và-can-thiệp)
+    - [10.5. Ý nghĩa thực tiễn của hệ thống](#105-ý-nghĩa-thực-tiễn-của-hệ-thống)
+    - [10.6. Hạn chế của hệ thống](#106-hạn-chế-của-hệ-thống)
+    - [10.7. Hướng phát triển trong tương lai](#107-hướng-phát-triển-trong-tương-lai)
+    - [10.8. Kết luận chung](#108-kết-luận-chung)
 ---
 
 ## 1. Đặt vấn đề
@@ -2156,88 +2226,543 @@ Hệ thống không nhất thiết phải bắt đầu bằng mô hình học m�
 
 ## 8. Quy trình cảnh báo và can thiệp
 
-### 8.1. Đầu ra của hệ thống
+### 8.1. Mục tiêu của quy trình
 
-Hệ thống không nên chỉ trả về một con số rủi ro. Đầu ra cần bao gồm:
+Quy trình cảnh báo và can thiệp được xây dựng nhằm giúp nhà trường:
 
-- Mã sinh viên.
-- Học kỳ đánh giá.
-- Điểm rủi ro.
-- Mức cảnh báo.
-- Các lý do chính.
-- Hành động đề xuất.
+1. Phát hiện sớm sinh viên có nguy cơ thôi học.
+2. Ưu tiên sinh viên cần hỗ trợ trước.
+3. Giải thích được vì sao sinh viên bị cảnh báo.
+4. Đề xuất hành động can thiệp phù hợp.
+5. Theo dõi quá trình hỗ trợ và đánh giá hiệu quả.
 
-Ví dụ một cảnh báo:
+> **Nguyên tắc quan trọng:** Hệ thống cảnh báo không nhằm trừng phạt, dán nhãn hoặc loại bỏ sinh viên. Mục tiêu cuối cùng là hỗ trợ sinh viên tiếp tục học tập.
+
+---
+
+### 8.2. Nguyên tắc cảnh báo
+
+Một cảnh báo hợp lệ cần bảo đảm các yêu cầu sau:
+
+| Nguyên tắc | Ý nghĩa |
+|------------|---------|
+| Sớm | Cảnh báo phải xuất hiện trước khi sinh viên chính thức thôi học |
+| Có thể giải thích | Phải nêu rõ lý do sinh viên bị cảnh báo |
+| Có thể hành động | Mỗi cảnh báo cần kèm hành động đề xuất |
+| Có ưu tiên | Sinh viên rủi ro cao hơn được xử lý trước |
+| Không trùng lặp | Một sinh viên không nên có nhiều cảnh báo trùng trong cùng một kỳ |
+| Tôn trọng quyền riêng tư | Chỉ người có thẩm quyền mới xem được cảnh báo |
+| Có phản hồi | Cần ghi nhận kết quả can thiệp để cải thiện hệ thống |
+
+---
+
+### 8.3. Quy trình tổng thể
 
 ```text
-Sinh viên: SV003
-Học kỳ: 20261
+Bước 1: Thu thập dữ liệu sinh viên
+Bước 2: Tính điểm rủi ro
+Bước 3: Xác định mức cảnh báo
+Bước 4: Kiểm tra cảnh báo trùng
+Bước 5: Tạo cảnh báo
+Bước 6: Đưa cảnh báo vào hàng đợi ưu tiên
+Bước 7: Chọn top-k sinh viên cần can thiệp trước
+Bước 8: Phân công người phụ trách
+Bước 9: Liên hệ sinh viên
+Bước 10: Xác minh nguyên nhân
+Bước 11: Thực hiện can thiệp
+Bước 12: Ghi nhận kết quả
+Bước 13: Cập nhật trạng thái cảnh báo
+Bước 14: Đánh giá và cải thiện hệ thống
+```
+
+**Sơ đồ rút gọn:**
+
+```text
+Dữ liệu sinh viên
+       |
+       v
+Tính điểm rủi ro
+       |
+       v
+Vượt ngưỡng cảnh báo?
+       |
+   Có  |  Không
+       |        \
+       v         v
+Tạo alert    Theo dõi định kỳ
+       |
+       v
+Chống trùng cảnh báo
+       |
+       v
+Heap / hàng đợi ưu tiên
+       |
+       v
+Top-k sinh viên ưu tiên
+       |
+       v
+Cố vấn học tập xử lý
+       |
+       v
+Can thiệp và phản hồi
+       |
+       v
+Cập nhật hệ thống
+```
+
+---
+
+### 8.4. Đầu ra của một cảnh báo
+
+Hệ thống không nên chỉ trả về một con số rủi ro. Một cảnh báo đầy đủ cần có:
+
+```text
+1. Mã sinh viên
+2. Họ tên
+3. Lớp
+4. Học kỳ đánh giá
+5. Điểm rủi ro
+6. Mức cảnh báo
+7. Lý do chính
+8. Hành động đề xuất
+9. Người phụ trách dự kiến
+10. Thời hạn phản hồi
+```
+
+**Ví dụ một cảnh báo:**
+
+```text
+Mã sinh viên: SV001
+Họ tên: Nguyễn Văn A
+Lớp: CA3
+Học kỳ: 20252
+
 Điểm rủi ro: 100/100
 Mức cảnh báo: RẤT CAO
 
 Lý do chính:
 - GPA dưới 2.0
-- Có từ 4 môn rớt trở lên
+- Số môn rớt từ 4 trở lên
 - Tỷ lệ vắng học trên 30%
 - Nợ học phí trên 8 triệu đồng
-- Điểm rèn luyện dưới 20
-- Tiến độ tín chỉ dưới 50%
+- Điểm rèn luyện thấp
+- GPA giảm liên tiếp qua nhiều học kỳ
 - Hơn 90 ngày không liên hệ cố vấn học tập
 
 Hành động đề xuất:
-- Can thiệp khẩn cấp trong tuần.
-- Phòng công tác sinh viên phối hợp với cố vấn học tập.
-- Kiểm tra tình trạng học phí và đề xuất hỗ trợ tài chính nếu cần.
-- Cân nhắc tư vấn tâm lý hoặc hỗ trợ cá nhân nếu có dấu hiệu khủng hoảng.
+- Cố vấn học tập liên hệ trong vòng 48 giờ
+- Phòng công tác sinh viên phối hợp kiểm tra tình trạng tài chính
+- Đề xuất hỗ trợ học phí hoặc học bổng nếu phù hợp
+- Tư vấn học đường nếu sinh viên có dấu hiệu khủng hoảng
+- Xếp nhóm học tập hoặc hỗ trợ học lại các môn quan trọng
 ```
 
 ---
 
-### 8.2. Thang mức cảnh báo
+### 8.5. Thang mức cảnh báo
 
-| Risk score | Mức cảnh báo | Ý nghĩa | Hành động đề xuất |
-|---:|---|---|---|
-| 0–39 | THẤP | Bình thường | Theo dõi định kỳ |
-| 40–59 | TRUNG BÌNH | Có dấu hiệu giảm sút | Nhắc nhở, gửi tài liệu hỗ trợ |
-| 60–79 | CAO | Nguy cơ rõ ràng | Cố vấn học tập liên hệ trực tiếp |
-| 80–100 | RẤT CAO | Cần can thiệp khẩn cấp | Họp khoa/phòng, hỗ trợ tài chính, tư vấn tâm lý nếu cần |
+| Điểm rủi ro | Mức cảnh báo | Ý nghĩa | Hành động đề xuất |
+|-------------|--------------|---------|-------------------|
+| 0 – 39 | THẤP | Bình thường hoặc rủi ro không đáng kể | Theo dõi định kỳ |
+| 40 – 59 | TRUNG BÌNH | Có dấu hiệu suy giảm nhẹ | Nhắc nhở, gửi tài liệu hỗ trợ, theo dõi thêm |
+| 60 – 79 | CAO | Có nguy cơ rõ ràng | Cố vấn học tập liên hệ trực tiếp |
+| 80 – 100 | RẤT CAO | Nguy cơ rất cao, cần can thiệp khẩn cấp | Họp cố vấn, phòng công tác sinh viên, hỗ trợ tài chính/tâm lý nếu cần |
+
+Ngưỡng cảnh báo có thể thay đổi theo từng trường hoặc từng học kỳ. Trong giai đoạn đầu, có thể chọn ngưỡng tạo cảnh báo là `risk_score >= 60` — nghĩa là sinh viên có điểm rủi ro từ mức CAO trở lên sẽ được đưa vào danh sách cần can thiệp.
 
 ---
 
-### 8.3. Quy trình can thiệp
+### 8.6. Quy trình tạo cảnh báo
 
-Quy trình đề xuất:
+**Các bước chi tiết:**
 
 ```text
-Hệ thống tính điểm rủi ro
-   ↓
-Sinh viên vượt ngưỡng cảnh báo
-   ↓
-Tạo alert
-   ↓
-Đưa vào hàng đợi ưu tiên
-   ↓
-Cố vấn học tập nhận cảnh báo
-   ↓
-Liên hệ và xác minh nguyên nhân
-   ↓
-Đề xuất hỗ trợ phù hợp
-   ↓
-Ghi nhận kết quả can thiệp
-   ↓
-Cập nhật mô hình và quy trình
+Bước 1: Lấy danh sách sinh viên cần đánh giá
+Bước 2: Tính điểm rủi ro cho từng sinh viên
+Bước 3: Nếu risk_score >= ngưỡng cảnh báo:
+            kiểm tra sinh viên đã có cảnh báo đang mở chưa
+Bước 4: Nếu chưa có cảnh báo:
+            tạo alert mới
+Bước 5: Thêm alert vào hàng đợi ưu tiên
+Bước 6: Chọn top-k alert có điểm cao nhất
+Bước 7: Gửi danh sách cho cố vấn học tập / phòng công tác sinh viên
 ```
 
-Các hành động can thiệp có thể bao gồm:
+**Mã giả:**
 
-- Nhắn tin nhắc nộp học phí.
-- Mời gặp cố vấn học tập.
-- Giới thiệu hỗ trợ tài chính.
-- Xếp nhóm học tập cho sinh viên yếu.
-- Cảnh báo môn học có nguy cơ rớt cao.
-- Tư vấn tâm lý nếu có dấu hiệu bất thường.
-- Liên hệ gia đình theo quy định nếu cần thiết.
+```text
+function generate_alerts(students, threshold, k):
+    alerts = []
+    opened_alerts = empty set
+    alert_heap = empty priority queue
 
+    for student in students:
+        score, reasons = compute_risk(student)
+
+        if score >= threshold:
+            if student.mssv not in opened_alerts:
+                alert = create_alert(student, score, reasons)
+                alerts.append(alert)
+
+                opened_alerts.add(student.mssv)
+                alert_heap.push(student.mssv, score)
+
+    top_alerts = top_k_alerts(alert_heap, k)
+    return top_alerts
+```
+
+**Cấu trúc dữ liệu sử dụng:**
+
+| Bước | Cấu trúc dữ liệu |
+|------|------------------|
+| Kiểm tra cảnh báo trùng | `set` |
+| Lưu cảnh báo | `dict` hoặc danh sách |
+| Xếp hạng cảnh báo | Heap |
+| Chọn top-k | Min-heap kích thước k hoặc max-heap |
+| Tra cứu sinh viên | Bảng băm |
+
+---
+
+### 8.7. Quy trình xử lý cảnh báo theo mức độ
+
+#### Mức THẤP (0 – 39)
+
+Hệ thống chưa cần tạo cảnh báo can thiệp trực tiếp.
+
+- **Hành động:** theo dõi định kỳ, cập nhật dữ liệu ở các kỳ tiếp theo, có thể gửi thông tin học tập chung cho lớp.
+- **Thời hạn phản hồi:** không cần phản hồi ngay.
+
+#### Mức TRUNG BÌNH (40 – 59)
+
+Sinh viên bắt đầu có dấu hiệu suy giảm.
+
+- **Hành động:** gửi nhắc nhở nhẹ nhàng, gửi tài liệu hỗ trợ học tập, nhắc đăng ký tư vấn học tập nếu cần, theo dõi thêm trong 1–2 tuần.
+- **Thời hạn phản hồi:** 1–2 tuần.
+- **Người phụ trách:** cố vấn học tập hoặc ban cán sự lớp.
+
+#### Mức CAO (60 – 79)
+
+Sinh viên có nguy cơ rõ ràng.
+
+- **Hành động:** cố vấn học tập liên hệ trực tiếp, tìm hiểu nguyên nhân học tập/tài chính/tâm lý/gia đình, đề xuất kế hoạch cải thiện học tập, nhắc nhở chuyên cần, hỗ trợ đăng ký học lại hoặc học phụ đạo.
+- **Thời hạn phản hồi:** 3–5 ngày làm việc.
+- **Người phụ trách:** cố vấn học tập.
+
+#### Mức RẤT CAO (80 – 100)
+
+Sinh viên cần được can thiệp khẩn cấp.
+
+- **Hành động:** cố vấn học tập liên hệ trong thời gian sớm nhất, phòng công tác sinh viên phối hợp xử lý, kiểm tra tình trạng nợ học phí, đề xuất hỗ trợ tài chính/học bổng/vay vốn, tư vấn tâm lý nếu có dấu hiệu khủng hoảng, xếp nhóm học tập hoặc hỗ trợ cá nhân, liên hệ gia đình theo quy định nếu cần.
+- **Thời hạn phản hồi:** 24–48 giờ.
+- **Người phụ trách:** cố vấn học tập + phòng công tác sinh viên.
+
+---
+
+### 8.8. Quy trình can thiệp
+
+```text
+Bước 1: Cố vấn học tập nhận cảnh báo
+Bước 2: Xác minh dữ liệu cảnh báo
+Bước 3: Liên hệ sinh viên
+Bước 4: Xác minh nguyên nhân thực tế
+Bước 5: Đề xuất hình thức hỗ trợ
+Bước 6: Thực hiện can thiệp
+Bước 7: Theo dõi tiến triển
+Bước 8: Ghi nhận kết quả
+Bước 9: Cập nhật trạng thái cảnh báo
+Bước 10: Phản hồi lại hệ thống để cải thiện
+```
+
+---
+
+### 8.9. Xác minh nguyên nhân
+
+Một cảnh báo chỉ là tín hiệu ban đầu. Trước khi can thiệp, cố vấn học tập cần xác minh nguyên nhân thực tế.
+
+| Nhóm nguyên nhân | Dấu hiệu từ dữ liệu | Hành động phù hợp |
+|------------------|---------------------|-------------------|
+| Học tập | GPA thấp, nhiều môn rớt, tiến độ chậm | Phụ đạo, xếp nhóm học tập, tư vấn kế hoạch học |
+| Chuyên cần | Vắng nhiều, đi muộn nhiều | Nhắc nhở, tìm hiểu lý do vắng |
+| Tài chính | Nợ học phí, chậm đóng học phí | Hỗ trợ học phí, học bổng, vay vốn |
+| Tâm lý | Ít tương tác, giảm tham gia hoạt động, kết quả giảm | Tư vấn tâm lý, hỗ trợ sinh viên |
+| Xã hội | Ít bạn, không tham gia câu lạc bộ, cô lập | Kết nối nhóm học tập, câu lạc bộ |
+| Gia đình | Có biến cố, hoàn cảnh khó khăn | Liên hệ gia đình nếu cần, hỗ trợ chính sách |
+| Kỹ năng học tập | Học lại nhiều lần, không theo kịp môn | Hướng dẫn phương pháp học, cố vấn học vụ |
+
+---
+
+### 8.10. Đề xuất hành động theo nguyên nhân
+
+Hệ thống nên gợi ý hành động can thiệp dựa trên lý do chính của cảnh báo.
+
+**Nếu nguyên nhân chủ yếu là học tập:**
+
+```text
+- Tư vấn kế hoạch học kỳ
+- Đăng ký học lại các môn quan trọng
+- Xếp nhóm học tập
+- Giới thiệu lớp phụ đạo
+- Giảng viên bộ môn theo dõi thêm
+```
+
+**Nếu nguyên nhân chủ yếu là chuyên cần:**
+
+```text
+- Nhắc nhở sinh viên đi học đầy đủ
+- Kiểm tra lý do vắng học
+- Liên hệ giảng viên môn học
+- Theo dõi chuyên cần trong 2 đến 4 tuần
+```
+
+**Nếu nguyên nhân chủ yếu là tài chính:**
+
+```text
+- Kiểm tra tình trạng nợ học phí
+- Đề xuất gia hạn học phí
+- Giới thiệu học bổng
+- Giới thiệu vay vốn sinh viên
+- Đề xuất miễn giảm học phí nếu thuộc diện chính sách
+```
+
+**Nếu nguyên nhân chủ yếu là tâm lý:**
+
+```text
+- Mời sinh viên tư vấn riêng
+- Giới thiệu dịch vụ tư vấn tâm lý
+- Tránh tạo áp lực hoặc dán nhãn
+- Theo dõi với sự đồng ý của sinh viên
+```
+
+**Nếu nguyên nhân chủ yếu là cô lập xã hội:**
+
+```text
+- Kết nối sinh viên với nhóm học tập
+- Khuyến khích tham gia câu lạc bộ
+- Phân công bạn cùng lớp hỗ trợ
+- Cố vấn học tập tăng tần suất liên hệ
+```
+
+---
+
+### 8.11. Trạng thái của cảnh báo
+
+Mỗi cảnh báo nên có trạng thái để theo dõi quá trình xử lý.
+
+```text
+NEW
+ASSIGNED
+CONTACTED
+INTERVENING
+IMPROVING
+RESOLVED
+ONGOING
+FALSE_POSITIVE
+CLOSED
+```
+
+| Trạng thái | Ý nghĩa |
+|------------|---------|
+| NEW | Cảnh báo mới được tạo |
+| ASSIGNED | Đã phân công người phụ trách |
+| CONTACTED | Đã liên hệ sinh viên |
+| INTERVENING | Đang can thiệp |
+| IMPROVING | Sinh viên có dấu hiệu cải thiện |
+| RESOLVED | Đã hỗ trợ xong, sinh viên ổn định |
+| ONGOING | Cần theo dõi thêm |
+| FALSE_POSITIVE | Cảnh báo sai hoặc dữ liệu sai |
+| CLOSED | Đóng cảnh báo sau khi kết thúc xử lý |
+
+**Sơ đồ trạng thái:**
+
+```text
+NEW
+ |
+ v
+ASSIGNED
+ |
+ v
+CONTACTED
+ |
+ v
+INTERVENING
+ |
+ +---> IMPROVING ---> RESOLVED ---> CLOSED
+ |
+ +---> ONGOING
+ |
+ +---> FALSE_POSITIVE ---> CLOSED
+```
+
+---
+
+### 8.12. Ghi nhận kết quả can thiệp
+
+Sau mỗi lần can thiệp, cần lưu lại thông tin để đánh giá hệ thống.
+
+**Các trường cần ghi nhận:**
+
+```text
+- Mã cảnh báo
+- Mã sinh viên
+- Học kỳ
+- Ngày tạo cảnh báo
+- Ngày can thiệp
+- Người phụ trách
+- Loại can thiệp
+- Nội dung hỗ trợ
+- Kết quả ban đầu
+- Trạng thái sinh viên sau can thiệp
+- Ghi chú
+```
+
+**Ví dụ:**
+
+```text
+Mã cảnh báo: ALERT_001
+Mã sinh viên: SV001
+Học kỳ: 20252
+Ngày tạo cảnh báo: 2026-01-10
+Ngày can thiệp: 2026-01-12
+Người phụ trách: Cố vấn học tập Nguyễn Thị B
+
+Loại can thiệp:
+- Hỗ trợ tài chính
+- Tư vấn kế hoạch học tập
+
+Kết quả ban đầu:
+- Sinh viên đồng ý gặp cố vấn
+- Sinh viên làm đơn gia hạn học phí
+- Sinh viên đăng ký nhóm học tập môn Toán rời rạc
+
+Trạng thái: INTERVENING
+```
+
+---
+
+### 8.13. Phản hồi để cải thiện hệ thống
+
+Kết quả can thiệp cần được phản hồi lại hệ thống để cải thiện chất lượng cảnh báo.
+
+**Các câu hỏi đánh giá:**
+
+```text
+1. Cảnh báo có đúng sinh viên cần hỗ trợ không?
+2. Lý do cảnh báo có chính xác không?
+3. Hành động đề xuất có phù hợp không?
+4. Thời gian phản hồi của cố vấn có kịp không?
+5. Sinh viên có tiếp tục học sau can thiệp không?
+6. Có cần điều chỉnh trọng số luật không?
+```
+
+Nếu phát hiện cảnh báo sai, cần cập nhật lại dữ liệu. Ví dụ: hệ thống cảnh báo sinh viên vắng học trên 30%, nhưng sinh viên có giấy nghỉ phép hợp lệ do ốm → cố vấn học tập xác minh và cập nhật lại dữ liệu chuyên cần → hệ thống tính lại điểm rủi ro.
+
+---
+
+### 8.14. Đánh giá hiệu quả quy trình
+
+Ngoài việc đánh giá mô hình dự đoán, cần đánh giá hiệu quả thực tế của quy trình can thiệp.
+
+| Chỉ số | Ý nghĩa |
+|--------|---------|
+| Số cảnh báo được tạo | Mức độ phát hiện rủi ro của hệ thống |
+| Số cảnh báo được xử lý | Mức độ phản hồi của cố vấn |
+| Thời gian phản hồi trung bình | Tốc độ can thiệp |
+| Số sinh viên tiếp tục học sau can thiệp | Hiệu quả thực tế |
+| Số sinh viên vẫn thôi học dù đã can thiệp | Giới hạn của hệ thống |
+| Tỷ lệ cảnh báo sai | Mức độ chính xác của cảnh báo |
+| Mức độ hài lòng của sinh viên | Tính nhân văn và phù hợp của quy trình |
+| Loại can thiệp hiệu quả nhất | Cơ sở để cải thiện chính sách |
+
+---
+
+### 8.15. Ánh xạ quy trình với cấu trúc dữ liệu và giải thuật
+
+| Bước trong quy trình | Cấu trúc dữ liệu / giải thuật liên quan |
+|----------------------|------------------------------------------|
+| Tính điểm rủi ro | Rule-based scoring |
+| Lưu hồ sơ sinh viên | Bảng băm |
+| Tạo đặc trưng tính điểm | Ma trận đặc trưng |
+| Phát hiện xu hướng giảm | Mảng chuỗi thời gian |
+| Phát hiện sinh viên cô lập | Đồ thị danh sách kề, BFS/DFS |
+| Chống trùng cảnh báo | Tập hợp `set` |
+| Xếp hạng cảnh báo | Heap |
+| Chọn top-k sinh viên ưu tiên | Min-heap kích thước k |
+| Cập nhật điểm rủi ro động | Indexed heap hoặc lazy heap |
+| Theo dõi trạng thái cảnh báo | Danh sách bản ghi / dictionary |
+
+---
+
+### 8.16. Ví dụ quy trình với một sinh viên
+
+Giả sử sinh viên `SV001` có dữ liệu sau:
+
+```text
+GPA: 1.8
+Số môn rớt: 4
+Tỷ lệ vắng học: 38%
+Nợ học phí: 9.000.000
+Điểm rèn luyện: 12
+Tiến độ tín chỉ: 40%
+Số ngày không liên hệ cố vấn: 95
+GPA các kỳ: [3.2, 2.8, 2.2, 2.0]
+```
+
+Hệ thống xử lý:
+
+```text
+Bước 1: Tính điểm rủi ro bằng rule-based
+Bước 2: Điểm rủi ro = 100
+Bước 3: Mức cảnh báo = RẤT CAO
+Bước 4: Phân tích chuỗi thời gian → GPA giảm liên tiếp
+Bước 5: Kiểm tra đồ thị xã hội → Sinh viên có ít kết nối
+Bước 6: Tạo cảnh báo
+Bước 7: Đưa vào heap
+Bước 8: SV001 nằm trong top ưu tiên
+Bước 9: Cố vấn học tập nhận cảnh báo
+Bước 10: Liên hệ sinh viên trong 48 giờ
+Bước 11: Xác minh nguyên nhân:
+         - Học tập yếu
+         - Nợ học phí
+         - Ngại liên hệ cố vấn
+Bước 12: Đề xuất can thiệp:
+         - Hỗ trợ học phí
+         - Tư vấn kế hoạch học
+         - Xếp nhóm học tập
+Bước 13: Ghi nhận kết quả
+Bước 14: Theo dõi trong các tuần tiếp theo
+```
+
+---
+
+### 8.17. Kết luận phần quy trình cảnh báo và can thiệp
+
+Quy trình cảnh báo và can thiệp không chỉ dừng ở việc tạo ra điểm rủi ro. Một quy trình hoàn chỉnh cần bao gồm:
+
+```text
+Tính điểm rủi ro
+→ Xác định mức cảnh báo
+→ Tạo cảnh báo
+→ Chống trùng cảnh báo
+→ Xếp hạng ưu tiên
+→ Phân công xử lý
+→ Liên hệ sinh viên
+→ Xác minh nguyên nhân
+→ Can thiệp phù hợp
+→ Ghi nhận kết quả
+→ Cập nhật và cải thiện hệ thống
+```
+
+Giá trị của hệ thống không chỉ nằm ở việc phát hiện sinh viên có nguy cơ thôi học, mà nằm ở việc:
+
+```text
+1. Phát hiện sớm
+2. Giải thích được lý do
+3. Ưu tiên đúng đối tượng
+4. Đề xuất hành động phù hợp
+5. Can thiệp kịp thời
+6. Tôn trọng quyền riêng tư của sinh viên
+7. Liên tục cải thiện dựa trên phản hồi
+```
 ---
 
 ## 9. Đánh giá và đạo đức dữ liệu
@@ -2334,33 +2859,280 @@ Hệ thống cần cập nhật lại dữ liệu chuyên cần.
 Risk score là giá trị theo thời điểm, không phải đánh giá cố định về con người.
 
 ---
-
 ## 10. Kết luận
 
-Hệ thống cảnh báo sớm sinh viên thôi học là một bài toán dự đoán rủi ro dựa trên dữ liệu giáo dục.
+### 10.1. Tóm tắt kết quả của báo cáo
 
-Bài toán có thể phát biểu là:
+Báo cáo đã trình bày ý tưởng thiết kế **hệ thống cảnh báo sớm nhằm giảm tỉ lệ sinh viên thôi học**. Bài toán cốt lõi được xác định là:
 
-> Dự đoán khả năng sinh viên có nguy cơ thôi học trong kỳ tiếp theo dựa trên dữ liệu học tập, chuyên cần, tài chính, hành vi và quan hệ xã hội.
+> Dựa trên dữ liệu học tập, chuyên cần, tài chính, hoạt động và quan hệ xã hội của sinh viên, hệ thống tính điểm rủi ro thôi học, xếp hạng mức độ ưu tiên can thiệp, giải thích nguyên nhân cảnh báo và đề xuất hành động hỗ trợ phù hợp.
 
-Cấu trúc dữ liệu phù hợp không phải là một cấu trúc duy nhất, mà là sự kết hợp:
+Hệ thống không chỉ trả lời câu hỏi:
 
-- **Cơ sở dữ liệu quan hệ** để lưu dữ liệu gốc.
-- **Feature matrix** để phục vụ tính toán rủi ro.
-- **Dữ liệu chuỗi thời gian** để phát hiện xu hướng giảm sút.
-- **Graph** để phân tích quan hệ xã hội nếu mở rộng.
-- **Priority queue** để xử lý cảnh báo theo mức ưu tiên.
+```text
+Ai có nguy cơ thôi học?
+```
 
-Giải thuật phù hợp có thể bắt đầu từ **rule-based scoring**, sau đó nâng cấp lên **machine learning classification**. Hướng thực tế nhất là kết hợp cả hai để vừa dự đoán tốt, vừa giải thích được.
+mà còn trả lời:
 
-Tuy nhiên, giá trị cốt lõi của hệ thống không nằm ở việc dự đoán chính xác tuyệt đối, mà nằm ở khả năng:
+```text
+Vì sao sinh viên đó có nguy cơ?
+Mức độ rủi ro là bao nhiêu?
+Sinh viên nào cần được ưu tiên hỗ trợ trước?
+Nhà trường nên thực hiện hành động can thiệp nào?
+```
 
-1. Phát hiện sớm.
-2. Cảnh báo có lý do.
-3. Hỗ trợ hành động can thiệp kịp thời.
-4. Tôn trọng quyền riêng tư và đạo đức dữ liệu.
-5. Liên tục cải thiện dựa trên phản hồi thực tế.
+Qua quá trình phân tích, báo cáo đã đề xuất một kiến trúc hệ thống gồm các tầng: thu thập dữ liệu, làm sạch dữ liệu, lưu trữ, trích xuất đặc trưng, tính điểm rủi ro, tạo cảnh báo, xếp hạng ưu tiên, can thiệp và phản hồi.
 
-Nói ngắn gọn:
+---
 
-> Hệ thống không chỉ trả lời câu hỏi “ai có nguy cơ thôi học?”, mà còn phải trả lời “vì sao?”, “mức độ nào?” và “nhà trường nên làm gì tiếp theo?”.
+### 10.2. Các cấu trúc dữ liệu đã đề xuất
+
+Một điểm quan trọng của báo cáo là hệ thống không sử dụng một cấu trúc dữ liệu duy nhất, mà kết hợp nhiều cấu trúc phù hợp với từng bài toán con.
+
+| Bài toán | Cấu trúc dữ liệu đề xuất | Vai trò |
+|----------|--------------------------|---------|
+| Lưu trữ dữ liệu gốc | Cơ sở dữ liệu quan hệ | Lưu thông tin sinh viên, điểm, chuyên cần, học phí, hoạt động |
+| Tra cứu hồ sơ sinh viên | Bảng băm | Tìm nhanh sinh viên theo MSSV |
+| Tính điểm rủi ro | Ma trận đặc trưng | Biểu diễn N sinh viên với F đặc trưng |
+| Phát hiện xu hướng học tập | Mảng chuỗi thời gian | Theo dõi GPA, số môn rớt, tỷ lệ vắng qua từng học kỳ |
+| Phân tích quan hệ xã hội | Đồ thị danh sách kề | Phát hiện sinh viên bị cô lập |
+| Xếp hạng cảnh báo | Heap / hàng đợi ưu tiên | Lấy sinh viên rủi ro cao nhất ra xử lý trước |
+| Chọn nhóm ưu tiên can thiệp | Min-heap kích thước k | Giải bài toán top-k |
+| Chống trùng cảnh báo | Tập hợp | Tránh tạo nhiều cảnh báo cho cùng một sinh viên trong một kỳ |
+
+Tóm tắt:
+
+```text
+Bảng băm        → tra cứu sinh viên theo MSSV
+Ma trận 2 chiều → lưu đặc trưng tính điểm rủi ro
+Mảng thời gian  → phát hiện xu hướng giảm GPA, tăng vắng học
+Đồ thị kề       → phát hiện sinh viên cô lập
+Heap            → xếp hạng cảnh báo và chọn top-k
+Set             → chống trùng cảnh báo
+```
+
+---
+
+### 10.3. Các giải thuật đã đề xuất
+
+#### 1. Rule-based scoring
+
+Tính điểm rủi ro cho sinh viên dựa trên các luật nghiệp vụ, ví dụ:
+
+- GPA thấp
+- Số môn rớt nhiều
+- Tỷ lệ vắng học cao
+- Nợ học phí kéo dài
+- Điểm rèn luyện thấp
+- Tiến độ tín chỉ chậm
+- Ít liên hệ cố vấn học tập
+
+Công thức:
+
+```text
+risk_score = min(100, tổng điểm của các luật được kích hoạt)
+```
+
+Ưu điểm: dễ hiểu, dễ triển khai, giải thích được lý do cảnh báo, không cần dữ liệu huấn luyện lớn như mô hình học máy.
+
+#### 2. Giải thuật top-k bằng heap
+
+Hệ thống cần chọn ra nhóm sinh viên nguy cơ cao nhất để can thiệp trước. Đây là bài toán top-k.
+
+Khi trường có nhiều sinh viên nhưng nguồn lực can thiệp có hạn, việc chọn top-k là cần thiết.
+
+Giải thuật đề xuất:
+
+```text
+Dùng min-heap kích thước k để chọn k sinh viên có điểm rủi ro cao nhất
+```
+
+Độ phức tạp: `O(N log k)`. Cách này hiệu quả hơn sắp xếp toàn bộ danh sách khi `N` lớn và `k` nhỏ.
+
+#### 3. Giải thuật phân tích chuỗi thời gian
+
+Dữ liệu GPA, tỷ lệ vắng học, số môn rớt hoặc nợ học phí được lưu theo từng học kỳ. Hệ thống có thể sử dụng:
+
+- Mảng một chiều
+- Mảng tổng tiền tố
+- Cửa sổ trượt
+- Duyệt mảng để đếm chuỗi giảm liên tiếp
+
+Nhờ đó, hệ thống không chỉ đánh giá sinh viên tại một thời điểm, mà còn phát hiện được xu hướng suy giảm kéo dài.
+
+#### 4. Giải thuật phân tích đồ thị
+
+Quan hệ xã hội của sinh viên được biểu diễn bằng đồ thị danh sách kề. Hệ thống có thể dùng:
+
+- BFS
+- DFS
+- Tính bậc đỉnh
+- Tìm thành phần liên thông
+
+để phát hiện sinh viên bị cô lập hoặc có ít kết nối với cộng đồng học tập. Đây là tín hiệu quan trọng vì sinh viên ít kết nối có nguy cơ rời bỏ môi trường học đường cao hơn.
+
+#### 5. Giải thuật hàng đợi ưu tiên
+
+Heap được sử dụng để cài đặt hàng đợi ưu tiên cảnh báo. Khi có nhiều cảnh báo, hệ thống không xử lý ngẫu nhiên mà ưu tiên:
+
+```text
+Sinh viên có điểm rủi ro cao nhất trước
+```
+
+Nếu điểm rủi ro thay đổi theo thời gian, có thể mở rộng bằng indexed heap để cập nhật ưu tiên hiệu quả.
+
+---
+
+### 10.4. Quy trình cảnh báo và can thiệp
+
+Báo cáo đã đề xuất quy trình xử lý hoàn chỉnh:
+
+```text
+Tính điểm rủi ro
+→ Xác định mức cảnh báo
+→ Tạo cảnh báo
+→ Chống trùng cảnh báo
+→ Xếp hạng ưu tiên bằng heap
+→ Chọn top-k sinh viên cần can thiệp
+→ Phân công cố vấn học tập
+→ Liên hệ sinh viên
+→ Xác minh nguyên nhân
+→ Thực hiện hỗ trợ
+→ Ghi nhận kết quả
+→ Cập nhật hệ thống
+```
+
+Một cảnh báo không nên chỉ là một con số. Mỗi cảnh báo cần có:
+
+```text
+- Điểm rủi ro
+- Mức cảnh báo
+- Lý do chính
+- Hành động đề xuất
+- Người phụ trách
+- Thời hạn xử lý
+- Trạng thái can thiệp
+```
+
+Nhờ đó, hệ thống không chỉ dự đoán rủi ro mà còn hỗ trợ hành động thực tế.
+
+---
+
+### 10.5. Ý nghĩa thực tiễn của hệ thống
+
+1. **Phát hiện sớm sinh viên có nguy cơ.** Thay vì chỉ biết sinh viên thôi học khi sự việc đã xảy ra, hệ thống giúp phát hiện dấu hiệu suy giảm từ sớm.
+
+2. **Ưu tiên đúng đối tượng.** Khi nguồn lực của cố vấn học tập và phòng công tác sinh viên có hạn, hệ thống giúp chọn ra nhóm sinh viên cần hỗ trợ trước.
+
+3. **Giải thích được lý do cảnh báo.** Nhờ rule-based scoring, hệ thống có thể chỉ ra nguyên nhân như: GPA thấp, nhiều môn rớt, vắng học nhiều, nợ học phí, ít hoạt động, ít liên hệ cố vấn, bị cô lập xã hội.
+
+4. **Hỗ trợ can thiệp kịp thời.** Hệ thống đề xuất hành động phù hợp cho cố vấn học tập, phòng công tác sinh viên và giảng viên.
+
+5. **Tăng tính nhân văn trong quản lý sinh viên.** Mục tiêu của hệ thống không phải là dán nhãn sinh viên, mà là tạo cơ hội hỗ trợ sớm hơn và phù hợp hơn.
+
+---
+
+### 10.6. Hạn chế của hệ thống
+
+1. **Chất lượng dữ liệu ảnh hưởng trực tiếp đến kết quả.** Nếu dữ liệu điểm, chuyên cần hoặc học phí sai, cảnh báo có thể sai.
+2. **Rule-based scoring phụ thuộc vào chuyên gia.** Trọng số các luật cần được điều chỉnh dựa trên thực tế và phản hồi.
+3. **Không phải sinh viên nào có điểm rủi ro cao cũng sẽ thôi học.** Hệ thống chỉ đưa ra cảnh báo, không phải kết luận tuyệt đối.
+4. **Nguy cơ thiên kiến dữ liệu.** Nếu sử dụng không cẩn thận các thông tin như hoàn cảnh kinh tế, dân tộc, quê quán, hệ thống có thể gây bất công cho sinh viên.
+5. **Cần quy trình can thiệp thực tế.** Cảnh báo chỉ có giá trị nếu có người tiếp nhận, xử lý và theo dõi.
+
+---
+
+### 10.7. Hướng phát triển trong tương lai
+
+#### 1. Kết hợp machine learning
+
+Khi nhà trường có đủ dữ liệu lịch sử về sinh viên thôi học, có thể huấn luyện mô hình phân loại để dự đoán xác suất rủi ro chính xác hơn. Tuy nhiên, vẫn cần giữ cơ chế giải thích để cố vấn học tập hiểu lý do cảnh báo.
+
+#### 2. Mô hình kết hợp rule-based và machine learning
+
+Hướng phù hợp là:
+
+```text
+machine learning dự đoán xác suất rủi ro
+rule-based bổ sung giải thích và hiệu chỉnh nghiệp vụ
+```
+
+Cách này vừa tận dụng dữ liệu, vừa giữ được tính minh bạch.
+
+#### 3. Phân tích đồ thị nâng cao
+
+Có thể mở rộng đồ thị để phân tích:
+
+- Mức độ ảnh hưởng của nhóm bạn
+- Sinh viên trung tâm trong lớp
+- Cụm sinh viên có nguy cơ cao
+- Sự lan truyền của xu hướng bỏ học trong nhóm bạn
+
+#### 4. Dashboard thời gian thực
+
+Hệ thống có thể phát triển dashboard cho cố vấn học tập, phòng công tác sinh viên, phòng đào tạo và giảng viên. Dashboard hiển thị:
+
+```text
+- Danh sách sinh viên rủi ro cao
+- Lý do cảnh báo
+- Trạng thái can thiệp
+- Số sinh viên đã được hỗ trợ
+- Hiệu quả can thiệp
+```
+
+#### 5. Đánh giá hiệu quả bằng dữ liệu phản hồi
+
+Sau mỗi học kỳ, hệ thống cần đánh giá:
+
+- Precision
+- Recall
+- F1-score
+- Top-k recall
+- Số sinh viên tiếp tục học sau can thiệp
+- Thời gian phản hồi trung bình
+
+Dữ liệu phản hồi giúp điều chỉnh trọng số luật, ngưỡng cảnh báo và hành động can thiệp.
+
+---
+
+### 10.8. Kết luận chung
+
+Báo cáo đã đề xuất một hệ thống cảnh báo sớm sinh viên thôi học dựa trên dữ liệu học tập, chuyên cần, tài chính, hoạt động và quan hệ xã hội. Hệ thống được tiếp cận theo hướng tính điểm rủi ro, xếp hạng ưu tiên can thiệp và giải thích nguyên nhân cảnh báo.
+
+**Về cấu trúc dữ liệu**, báo cáo đã đề xuất sử dụng:
+
+```text
+- Cơ sở dữ liệu quan hệ để lưu trữ dữ liệu gốc
+- Bảng băm để tra cứu sinh viên
+- Ma trận đặc trưng để tính điểm rủi ro
+- Mảng chuỗi thời gian để phát hiện xu hướng suy giảm
+- Đồ thị danh sách kề để phân tích quan hệ xã hội
+- Heap để xếp hạng cảnh báo và chọn top-k
+- Tập hợp để chống trùng cảnh báo
+```
+
+**Về giải thuật**, báo cáo đã đề xuất:
+
+```text
+- Rule-based scoring
+- Top-k bằng heap
+- Phân tích chuỗi thời gian
+- BFS/DFS trên đồ thị
+- Hàng đợi ưu tiên
+- Hướng mở rộng bằng machine learning
+```
+
+Giá trị cốt lõi của hệ thống không nằm ở việc dự đoán tuyệt đối chính xác, mà nằm ở khả năng:
+
+```text
+1. Phát hiện sớm
+2. Giải thích được lý do
+3. Xếp hạng đúng mức ưu tiên
+4. Đề xuất hành động phù hợp
+5. Hỗ trợ can thiệp kịp thời
+6. Tôn trọng quyền riêng tư và đạo đức dữ liệu
+7. Liên tục cải thiện dựa trên phản hồi
+```
+
+> **Tóm lại:** Hệ thống cảnh báo sớm không chỉ giúp nhà trường trả lời câu hỏi "sinh viên nào có nguy cơ thôi học?", mà còn giúp trả lời "vì sao sinh viên đó có nguy cơ?", "mức độ rủi ro ra sao?" và "nhà trường nên can thiệp như thế nào?". Nếu được triển khai đúng cách, hệ thống có thể trở thành công cụ hỗ trợ quan trọng giúp giảm tỉ lệ thôi học và nâng cao chất lượng quản lý, hỗ trợ sinh viên trong nhà trường.
