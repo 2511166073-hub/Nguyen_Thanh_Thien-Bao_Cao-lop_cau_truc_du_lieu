@@ -1688,78 +1688,527 @@ Cách tiếp cận này giúp hệ thống: dễ giải thích, dễ triển kha
 
 ## 7. Kiến trúc hệ thống
 
-Kiến trúc đề xuất gồm các tầng sau:
+### 7.1. Nguyên tắc thiết kế
+
+Kiến trúc hệ thống được thiết kế theo hướng **pipeline xử lý dữ liệu**, chia thành các tầng rõ ràng:
 
 ```text
 Nguồn dữ liệu
    ↓
 Thu thập và làm sạch dữ liệu
    ↓
-Cơ sở dữ liệu quan hệ / Data warehouse
+Lưu trữ dữ liệu gốc
    ↓
-Feature engineering
+Trích xuất đặc trưng
    ↓
-Mô hình tính điểm rủi ro
+Tính điểm rủi ro
    ↓
-Hệ thống cảnh báo
+Tạo cảnh báo
    ↓
-Dashboard cho cố vấn học tập
+Xếp hạng ưu tiên can thiệp
+   ↓
+Dashboard / cố vấn học tập
    ↓
 Can thiệp và phản hồi
    ↓
-Cập nhật mô hình
+Đánh giá và cải thiện hệ thống
 ```
 
-### Giải thích từng tầng
+**Nguyên tắc thiết kế:**
 
-#### Tầng 1: Nguồn dữ liệu
+1. **Tách rõ tầng lưu trữ và tầng xử lý.** Cơ sở dữ liệu quan hệ dùng để lưu trữ dữ liệu gốc. Các cấu trúc dữ liệu như bảng băm, ma trận đặc trưng, mảng chuỗi thời gian, đồ thị và heap dùng cho tầng xử lý.
+2. **Mỗi bài toán con dùng một cấu trúc dữ liệu phù hợp.** Ví dụ: tra cứu sinh viên bằng bảng băm, chọn top-k bằng heap, phân tích quan hệ xã hội bằng đồ thị danh sách kề.
+3. **Cảnh báo phải giải thích được.** Hệ thống không chỉ trả về điểm rủi ro, mà còn phải đưa ra lý do và hành động đề xuất.
+4. **Có phản hồi để cải thiện.** Kết quả can thiệp được ghi nhận để đánh giá và hiệu chỉnh hệ thống.
 
-Bao gồm dữ liệu từ:
+---
 
-- Phòng đào tạo.
-- Phòng công tác sinh viên.
-- Hệ thống điểm danh.
-- Hệ thống tài chính.
-- Portal sinh viên.
-- Câu lạc bộ và hoạt động ngoại khóa.
+### 7.2. Sơ đồ kiến trúc tổng thể
 
-#### Tầng 2: Thu thập và làm sạch dữ liệu
+```text
++-------------------------------------------------------------+
+|                         NGUỒN DỮ LIỆU                       |
+|  Phòng đào tạo | Công tác sinh viên | Tài chính | Điểm danh |
+|  Portal sinh viên | Câu lạc bộ | Cố vấn học tập             |
++-------------------------------------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|                  THU THẬP VÀ LÀM SẠCH DỮ LIỆU                |
+|  - Lấy dữ liệu theo học kỳ / theo đợt                        |
+|  - Xử lý giá trị thiếu, trùng, sai định dạng                 |
++-------------------------------------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|                         LƯU TRỮ                              |
+|  Cơ sở dữ liệu quan hệ: students, grades, attendance,       |
+|  finance, activities, support_events, alerts, interventions |
++-------------------------------------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|                    TRÍCH XUẤT ĐẶC TRƯNG                      |
+|  - Bảng băm hồ sơ sinh viên                                  |
+|  - Ma trận đặc trưng                                         |
+|  - Mảng chuỗi thời gian                                      |
+|  - Đồ thị quan hệ xã hội                                     |
++-------------------------------------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|                    ĐỘNG CƠ TÍNH ĐIỂM RỦI RO                  |
+|  - Rule-based scoring                                        |
+|  - Phân tích xu hướng GPA / vắng học                         |
+|  - Phân tích đồ thị cô lập                                   |
+|  - Tùy chọn: machine learning                                |
++-------------------------------------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|                     CẢNH BÁO VÀ XẾP HẠNG                     |
+|  - Tạo alert                                                 |
+|  - Chống trùng cảnh báo                                      |
+|  - Đưa vào heap / hàng đợi ưu tiên                           |
+|  - Chọn top-k sinh viên cần can thiệp                        |
++-------------------------------------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|              DASHBOARD CHO CỐ VẤN / PHÒNG CTSV               |
+|  - Danh sách sinh viên rủi ro cao                            |
+|  - Lý do cảnh báo                                            |
+|  - Hành động đề xuất                                         |
++-------------------------------------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|                    CAN THIỆP VÀ PHẢN HỒI                    |
+|  - Cố vấn liên hệ sinh viên                                  |
+|  - Hỗ trợ tài chính, học tập, tâm lý                         |
+|  - Ghi nhận kết quả                                          |
++-------------------------------------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|                  ĐÁNH GIÁ VÀ CẢI THIỆN                       |
+|  - Precision, recall, F1-score, top-k recall                 |
+|  - Hiệu quả can thiệp                                        |
+|  - Cập nhật luật / mô hình                                   |
++-------------------------------------------------------------+
+```
 
-Xử lý:
+---
 
-- Giá trị thiếu.
-- Dữ liệu trùng.
-- Sai định dạng.
-- Ngoại lai không hợp lệ.
-- Dữ liệu bất thường.
+### 7.3. Mô tả các tầng trong kiến trúc
 
-#### Tầng 3: Lưu trữ dữ liệu
+#### 7.3.1. Tầng nguồn dữ liệu
 
-Dùng cơ sở dữ liệu quan hệ để lưu dữ liệu gốc và các bảng nghiệp vụ.
+Tầng này bao gồm các hệ thống đang quản lý dữ liệu sinh viên trong nhà trường.
 
-#### Tầng 4: Tạo đặc trưng
+| Nguồn dữ liệu | Dữ liệu cung cấp |
+|---------------|------------------|
+| Phòng đào tạo | Điểm, môn học, tín chỉ, tiến độ học tập |
+| Phòng công tác sinh viên | Hoạt động ngoại khóa, hỗ trợ sinh viên |
+| Hệ thống tài chính | Học phí, nợ học phí, miễn giảm, học bổng |
+| Hệ thống điểm danh | Vắng học, đi muộn, chuyên cần |
+| Portal sinh viên | Lịch sử truy cập, đăng ký môn học, hủy môn |
+| Câu lạc bộ / đoàn hội | Mức độ tham gia hoạt động |
+| Cố vấn học tập | Lịch sử liên hệ, tư vấn, hỗ trợ |
 
-Chuyển dữ liệu quan hệ thành feature matrix, bao gồm:
+#### 7.3.2. Tầng thu thập và làm sạch dữ liệu
 
-- Đặc trưng hiện tại.
-- Đặc trưng xu hướng.
-- Đặc trưng quan hệ xã hội nếu có.
+Tầng này lấy dữ liệu từ nhiều nguồn và chuẩn hóa trước khi lưu trữ hoặc tính toán.
 
-#### Tầng 5: Tính điểm rủi ro
+**Công việc chính:**
 
-Sử dụng rule-based scoring, machine learning hoặc hybrid.
+- Xử lý dữ liệu thiếu.
+- Loại bỏ bản ghi trùng.
+- Chuẩn hóa mã sinh viên.
+- Chuẩn hóa học kỳ.
+- Kiểm tra giá trị bất thường.
+- Gắn mốc thời gian cho từng bản ghi.
 
-#### Tầng 6: Cảnh báo
+Ví dụ: nếu một sinh viên có nhiều bản ghi điểm của cùng một môn trong cùng học kỳ, hệ thống cần chọn bản ghi hợp lệ cuối cùng.
 
-Phân loại mức rủi ro và đưa vào hàng đợi ưu tiên.
+#### 7.3.3. Tầng lưu trữ
 
-#### Tầng 7: Can thiệp
+Tầng lưu trữ dùng **cơ sở dữ liệu quan hệ** để lưu dữ liệu gốc.
 
-Cố vấn học tập, phòng công tác sinh viên và giảng viên bộ môn thực hiện hành động hỗ trợ.
+```text
+students, semesters, courses, enrollments, grades, attendance,
+finance, activities, support_events, risk_scores, alerts,
+interventions, feedback
+```
 
-#### Tầng 8: Phản hồi
+**Vai trò:**
 
-Ghi nhận kết quả can thiệp để cải thiện mô hình và quy trình.
+- Lưu trữ lâu dài.
+- Đảm bảo toàn vẹn dữ liệu.
+- Truy vấn theo sinh viên, học kỳ, lớp, môn học.
+- Tích hợp với hệ thống quản lý đào tạo hiện có.
+
+> **Lưu ý:** Cơ sở dữ liệu quan hệ thuộc tầng lưu trữ. Phần tính toán và giải thuật sẽ sử dụng các cấu trúc dữ liệu trong bộ nhớ như bảng băm, ma trận đặc trưng, mảng chuỗi thời gian, đồ thị và heap.
+
+#### 7.3.4. Tầng trích xuất đặc trưng
+
+Tầng này chuyển dữ liệu thô thành các cấu trúc phù hợp cho giải thuật.
+
+| Cấu trúc dữ liệu | Mục đích |
+|------------------|----------|
+| Bảng băm sinh viên | Tra cứu hồ sơ theo MSSV |
+| Ma trận đặc trưng | Tính điểm rủi ro |
+| Mảng chuỗi thời gian | Phân tích xu hướng GPA, vắng học, nợ học phí |
+| Đồ thị danh sách kề | Phân tích quan hệ xã hội |
+| Tập hợp cảnh báo đang mở | Chống trùng cảnh báo |
+
+```python
+students = {
+    "SV001": {...}
+}
+
+feature_matrix = [
+    [1.8, 4, 0.38, 9000000, 12, 0.40, 95],
+    [3.2, 0, 0.05, 0,       85, 0.95, 10]
+]
+
+time_series = {
+    "SV001": {
+        "gpa": [3.2, 2.8, 2.2, 2.0]
+    }
+}
+
+social_graph = {
+    "SV001": ["SV002", "SV003"],
+    "SV002": ["SV001", "SV003"],
+    "SV003": ["SV001", "SV002"]
+}
+```
+
+#### 7.3.5. Tầng tính điểm rủi ro
+
+Tầng này thực hiện tính điểm rủi ro cho từng sinh viên.
+
+```text
+1. Rule-based scoring
+2. Time-series analyzer
+3. Social graph analyzer
+4. Optional machine learning model
+```
+
+Trong phạm vi môn học, thành phần chính nên là: **rule-based scoring**, **time-series analyzer**, **social graph analyzer**. Machine learning chỉ nên xem là hướng mở rộng.
+
+#### 7.3.6. Tầng cảnh báo và xếp hạng
+
+Tầng này nhận điểm rủi ro từ tầng tính điểm và tạo cảnh báo.
+
+**Các bước:**
+
+```text
+1. Kiểm tra sinh viên có vượt ngưỡng rủi ro hay không
+2. Kiểm tra đã có cảnh báo đang mở trong học kỳ hay chưa
+3. Tạo cảnh báo
+4. Đưa cảnh báo vào hàng đợi ưu tiên
+5. Chọn top-k sinh viên cần can thiệp trước
+```
+
+**Cấu trúc dữ liệu sử dụng:**
+
+| Cấu trúc | Vai trò |
+|----------|---------|
+| `set` | Chống trùng cảnh báo |
+| Heap | Xếp hạng cảnh báo |
+| Min-heap kích thước k | Chọn top-k |
+| Indexed heap | Cập nhật điểm rủi ro động |
+
+#### 7.3.7. Tầng dashboard / thông báo
+
+Tầng này hiển thị danh sách sinh viên cần can thiệp. Mỗi cảnh báo nên gồm:
+
+```text
+- Mã sinh viên
+- Họ tên
+- Lớp
+- Học kỳ
+- Điểm rủi ro
+- Mức cảnh báo
+- Lý do chính
+- Hành động đề xuất
+- Người phụ trách
+```
+
+**Ví dụ:**
+
+```text
+Sinh viên: SV001
+Lớp: CA3
+Học kỳ: 20252
+Risk score: 100
+Mức cảnh báo: RẤT CAO
+
+Lý do:
+- GPA dưới 2.0
+- Số môn rớt từ 4 trở lên
+- Tỷ lệ vắng học trên 30%
+- Nợ học phí trên 8 triệu đồng
+- GPA giảm liên tiếp qua nhiều kỳ
+
+Hành động đề xuất:
+- Cố vấn học tập liên hệ trong tuần
+- Kiểm tra tình trạng tài chính
+- Đề xuất hỗ trợ học phí hoặc học bổng
+- Xếp nhóm học tập nếu cần
+```
+
+#### 7.3.8. Tầng can thiệp và phản hồi
+
+Sau khi nhận cảnh báo, cố vấn học tập hoặc phòng công tác sinh viên thực hiện can thiệp.
+
+**Các hành động có thể gồm:**
+
+```text
+- Nhắc nhở học tập
+- Mời gặp cố vấn học tập
+- Giới thiệu hỗ trợ tài chính
+- Xếp nhóm học tập
+- Tư vấn tâm lý
+- Liên hệ gia đình nếu cần thiết
+```
+
+**Kết quả can thiệp cần được lưu lại:**
+
+```text
+- Ngày can thiệp
+- Người phụ trách
+- Loại can thiệp
+- Kết quả ban đầu
+- Trạng thái sinh viên sau can thiệp
+```
+
+#### 7.3.9. Tầng đánh giá và cải thiện
+
+Tầng này dùng để đánh giá hệ thống sau một học kỳ hoặc một đợt vận hành.
+
+| Chỉ số | Ý nghĩa |
+|--------|---------|
+| Precision | Trong số sinh viên bị cảnh báo, có bao nhiêu sinh viên thực sự rủi ro |
+| Recall | Trong số sinh viên thực sự rủi ro, hệ thống phát hiện được bao nhiêu |
+| F1-score | Cân bằng giữa precision và recall |
+| Top-k recall | Trong top-k sinh viên được ưu tiên, có bao nhiêu sinh viên thực sự rủi ro |
+| Hiệu quả can thiệp | Số sinh viên tiếp tục học sau can thiệp |
+
+**Dữ liệu phản hồi giúp:**
+
+- Điều chỉnh trọng số luật.
+- Thêm luật mới.
+- Hiệu chỉnh ngưỡng cảnh báo.
+- Cải thiện quy trình can thiệp.
+- Nếu mở rộng, dùng để huấn luyện mô hình học máy.
+
+---
+
+### 7.4. Luồng xử lý chính của hệ thống
+
+#### 7.4.1. Luồng xử lý theo đợt
+
+Đây là luồng phù hợp nhất cho báo cáo.
+
+```text
+Bước 1: Lấy dữ liệu sinh viên theo học kỳ
+Bước 2: Làm sạch dữ liệu
+Bước 3: Lưu vào cơ sở dữ liệu quan hệ
+Bước 4: Trích xuất đặc trưng
+Bước 5: Tính điểm rủi ro bằng rule-based
+Bước 6: Phân tích chuỗi thời gian
+Bước 7: Phân tích đồ thị quan hệ xã hội
+Bước 8: Tổng hợp điểm rủi ro
+Bước 9: Tạo cảnh báo nếu vượt ngưỡng
+Bước 10: Chống trùng cảnh báo
+Bước 11: Đưa cảnh báo vào heap
+Bước 12: Chọn top-k sinh viên ưu tiên
+Bước 13: Gửi danh sách cho cố vấn học tập
+Bước 14: Ghi nhận can thiệp
+Bước 15: Đánh giá và cập nhật hệ thống
+```
+
+#### 7.4.2. Luồng cập nhật cảnh báo động
+
+Nếu dữ liệu được cập nhật thường xuyên (ví dụ điểm danh hoặc học phí), hệ thống có thể cập nhật điểm rủi ro của một sinh viên.
+
+```text
+Bước 1: Nhận dữ liệu mới của sinh viên
+Bước 2: Cập nhật hồ sơ sinh viên trong bảng băm
+Bước 3: Tính lại điểm rủi ro
+Bước 4: Cập nhật cảnh báo trong heap
+Bước 5: Nếu điểm rủi ro tăng, đẩy ưu tiên lên cao hơn
+Bước 6: Thông báo cho cố vấn học tập nếu cần
+```
+
+**Cấu trúc phù hợp:** bảng băm + indexed heap.
+
+---
+
+### 7.5. Các module chức năng đề xuất
+
+| Module | Chức năng chính | Cấu trúc dữ liệu liên quan |
+|--------|-----------------|----------------------------|
+| DataLoader | Đọc dữ liệu từ database hoặc file | Bảng băm |
+| DataCleaner | Làm sạch và chuẩn hóa dữ liệu | Danh sách, bảng băm |
+| FeatureBuilder | Tạo ma trận đặc trưng | Ma trận hai chiều |
+| TimeSeriesAnalyzer | Phân tích GPA, vắng học theo thời gian | Mảng chuỗi thời gian, prefix sum |
+| SocialGraphAnalyzer | Phân tích quan hệ xã hội | Đồ thị danh sách kề |
+| RiskScorer | Tính điểm rủi ro bằng luật | Mảng luật |
+| AlertManager | Tạo và quản lý cảnh báo | Set, dict |
+| PriorityRanker | Xếp hạng cảnh báo, chọn top-k | Heap |
+| InterventionLogger | Ghi nhận can thiệp | Danh sách bản ghi |
+| EvaluationService | Đánh giá hiệu quả hệ thống | Bảng thống kê |
+
+---
+
+### 7.6. Ánh xạ kiến trúc với cấu trúc dữ liệu và giải thuật
+
+| Tầng / Module | Cấu trúc dữ liệu | Giải thuật | Độ phức tạp tiêu biểu |
+|---------------|------------------|------------|------------------------|
+| Tra cứu sinh viên | Bảng băm | Hash lookup | `O(1)` trung bình |
+| Xây dựng đặc trưng | Ma trận hai chiều | Duyệt và tổng hợp | `O(N·F)` |
+| Tính điểm rủi ro | Mảng luật | Rule-based scoring | `O(N·R)` |
+| Phân tích xu hướng | Mảng chuỗi thời gian | Duyệt mảng, prefix sum | `O(T)` |
+| Phân tích quan hệ | Đồ thị danh sách kề | BFS / DFS | `O(V + E)` |
+| Chống trùng cảnh báo | Tập hợp | Hash set | `O(1)` trung bình |
+| Xếp hạng top-k | Heap | Top-k selection | `O(N log k)` |
+| Cập nhật cảnh báo động | Indexed heap | Heap update | `O(log N)` |
+
+---
+
+### 7.7. Kiến trúc cài đặt đề xuất bằng Python
+
+```text
+student-risk-system/
+│
+├── main.py
+│
+├── data/
+│   ├── students.csv
+│   ├── grades.csv
+│   ├── attendance.csv
+│   ├── finance.csv
+│   ├── activities.csv
+│   └── social_edges.csv
+│
+├── src/
+│   ├── models.py
+│   ├── rules.py
+│   ├── scoring.py
+│   ├── timeseries.py
+│   ├── graph.py
+│   ├── topk.py
+│   ├── alert_queue.py
+│   └── evaluation.py
+│
+└── output/
+    ├── alerts.csv
+    └── top_k_alerts.csv
+```
+
+| File | Chức năng |
+|------|-----------|
+| `models.py` | Định nghĩa lớp Feature, Alert, Student |
+| `rules.py` | Lưu danh sách luật tính điểm rủi ro |
+| `scoring.py` | Tính điểm rủi ro |
+| `timeseries.py` | Phân tích GPA, vắng học theo thời gian |
+| `graph.py` | Xây dựng đồ thị, BFS, phát hiện cô lập |
+| `topk.py` | Chọn top-k bằng heap |
+| `alert_queue.py` | Quản lý hàng đợi cảnh báo |
+| `evaluation.py` | Đánh giá precision, recall, top-k recall |
+| `main.py` | Chạy toàn bộ pipeline |
+
+**Thư viện Python đề xuất:**
+
+```python
+heapq, collections, dataclasses, csv, sqlite3
+```
+
+Nếu cần xử lý dữ liệu bảng, có thể dùng `pandas`. Tuy nhiên, phần giải thuật cốt lõi vẫn nên dùng `dict, list, heapq, deque, set` để thể hiện rõ cấu trúc dữ liệu và giải thuật.
+
+---
+
+### 7.8. Kiến trúc đơn giản cho bài cá nhân
+
+Nếu đây là báo cáo cá nhân, không cần vẽ kiến trúc quá phức tạp. Có thể rút gọn thành 4 module:
+
+```text
+1. Data Access
+   - Đọc dữ liệu sinh viên
+   - Lưu vào dict
+
+2. Risk Engine
+   - Rule-based scoring
+   - Time-series analyzer
+   - Social graph analyzer
+
+3. Alert Ranking
+   - Heap
+   - Top-k
+
+4. Output
+   - Danh sách cảnh báo
+   - Lý do
+   - Hành động đề xuất
+```
+
+**Sơ đồ rút gọn:**
+
+```text
+Dữ liệu sinh viên
+       |
+       v
+Data Access (dict)
+       |
+       v
+Risk Engine
+  - Rule scoring
+  - Time series
+  - Graph
+       |
+       v
+Alert Ranking (heap)
+       |
+       v
+Top-k cảnh báo ưu tiên
+```
+
+Kiến trúc này đủ để thể hiện các nội dung môn học: bảng băm, ma trận đặc trưng, mảng chuỗi thời gian, đồ thị, heap, giải thuật top-k.
+
+---
+
+### 7.9. Kết luận phần kiến trúc
+
+Kiến trúc hệ thống được đề xuất theo mô hình pipeline gồm nhiều tầng:
+
+```text
+Thu thập dữ liệu
+→ Làm sạch dữ liệu
+→ Lưu trữ
+→ Trích xuất đặc trưng
+→ Tính điểm rủi ro
+→ Tạo cảnh báo
+→ Xếp hạng ưu tiên
+→ Can thiệp
+→ Đánh giá và cải thiện
+```
+
+Điểm quan trọng của kiến trúc này là mỗi tầng gắn với một nhóm cấu trúc dữ liệu và giải thuật cụ thể:
+
+```text
+Bảng băm        → tra cứu hồ sơ sinh viên
+Ma trận 2 chiều → tính điểm rủi ro
+Mảng thời gian  → phát hiện xu hướng suy giảm
+Đồ thị kề       → phát hiện sinh viên cô lập
+Heap            → xếp hạng và chọn top-k cảnh báo
+Set             → chống trùng cảnh báo
+```
+
+Hệ thống không nhất thiết phải bắt đầu bằng mô hình học máy phức tạp. Hướng phù hợp và giải thích được là bắt đầu từ **rule-based scoring**, sau đó mở rộng dần bằng phân tích chuỗi thời gian, đồ thị, hàng đợi ưu tiên và học máy nếu có đủ dữ liệu lịch sử.
 
 ---
 
