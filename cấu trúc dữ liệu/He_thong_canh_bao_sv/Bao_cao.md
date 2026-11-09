@@ -54,22 +54,160 @@ Hệ thống không nhằm mục đích loại bỏ hay trừng phạt sinh viê
 
 ## 3. Bài toán cốt lõi
 
+### 3.1. Phát biểu bài toán
+
 Bài toán được phát biểu như sau:
 
-> Cho dữ liệu lịch sử của sinh viên gồm thông tin cá nhân, kết quả học tập, chuyên cần, học phí, hoạt động ngoại khóa và các sự kiện hỗ trợ. Hãy dự đoán khả năng sinh viên đó có nguy cơ thôi học trong kỳ tiếp theo.
+> Cho dữ liệu lịch sử và dữ liệu hiện tại của N sinh viên trong một học kỳ, bao gồm thông tin cá nhân, kết quả học tập, chuyên cần, tài chính, hoạt động ngoại khóa và các sự kiện hỗ trợ. Hãy **tính điểm rủi ro thôi học** của từng sinh viên, **xác định mức cảnh báo**, **giải thích nguyên nhân** và **xếp hạng sinh viên theo mức độ ưu tiên can thiệp**.
 
-Về mặt kỹ thuật, đây có thể xem là các bài toán sau:
+Nói cách khác, hệ thống cần trả lời các câu hỏi:
 
-| Cách tiếp cận | Mô tả |
-|---|---|
+```text
+1. Sinh viên nào có nguy cơ thôi học?
+2. Mức độ nguy cơ là bao nhiêu?
+3. Nguyên nhân chính của nguy cơ là gì?
+4. Sinh viên nào cần được ưu tiên hỗ trợ trước?
+5. Nhà trường nên thực hiện hành động can thiệp nào?
+```
+
+---
+
+### 3.2. Dữ liệu đầu vào
+
+Đầu vào của bài toán là dữ liệu của `N` sinh viên trong một học kỳ. Với mỗi sinh viên, dữ liệu bao gồm:
+
+| Nhóm dữ liệu | Ví dụ |
+|--------------|-------|
+| Thông tin cá nhân | Mã sinh viên, lớp, năm đào tạo, diện chính sách |
+| Kết quả học tập | GPA, số môn rớt, số tín chỉ tích lũy, tiến độ học tập |
+| Chuyên cần | Số buổi vắng, tỷ lệ vắng học, số lần đi muộn |
+| Tài chính | Nợ học phí, số lần chậm đóng học phí, học bổng |
+| Hoạt động | Điểm rèn luyện, hoạt động ngoại khóa, câu lạc bộ |
+| Hỗ trợ | Lịch sử liên hệ cố vấn học tập, tư vấn tâm lý |
+| Quan hệ xã hội | Bạn cùng lớp, nhóm học tập, câu lạc bộ |
+
+Ký hiệu tập sinh viên là `S = {s₁, s₂, ..., s_N}`. Mỗi sinh viên `sᵢ` được biểu diễn dưới dạng một vector đặc trưng:
+
+```text
+xᵢ = {GPA, số môn rớt, tỷ lệ vắng, nợ học phí, điểm rèn luyện, ...}
+```
+
+Ngoài ra, mỗi sinh viên còn có dữ liệu chuỗi thời gian:
+
+```text
+GPAᵢ = [GPA_kỳ_1, GPA_kỳ_2, ..., GPA_kỳ_T]
+```
+
+và dữ liệu quan hệ xã hội được biểu diễn bằng đồ thị:
+
+```text
+G = (V, E)
+```
+
+trong đó `V` là tập đỉnh (sinh viên, lớp, câu lạc bộ, cố vấn học tập) và `E` là tập cạnh biểu diễn quan hệ giữa các đỉnh.
+
+---
+
+### 3.3. Dữ liệu đầu ra
+
+Với mỗi sinh viên, hệ thống trả về:
+
+```text
+1. Điểm rủi ro: risk_score ∈ [0, 100]
+2. Mức cảnh báo: THẤP, TRUNG BÌNH, CAO, RẤT CAO
+3. Danh sách lý do chính gây ra rủi ro
+4. Hành động can thiệp được đề xuất
+```
+
+Ngoài ra, hệ thống tạo ra danh sách ưu tiên:
+
+```text
+Top-k sinh viên có risk_score cao nhất
+```
+
+để cố vấn học tập và phòng công tác sinh viên xử lý trước.
+
+**Ví dụ đầu ra:**
+
+```text
+Sinh viên: SV001
+Risk score: 100
+Mức cảnh báo: RẤT CAO
+
+Lý do chính:
+- GPA dưới 2.0
+- Có từ 4 môn rớt trở lên
+- Tỷ lệ vắng học trên 30%
+- Nợ học phí trên 8 triệu đồng
+- Hơn 90 ngày không liên hệ cố vấn học tập
+
+Hành động đề xuất:
+- Cố vấn học tập liên hệ khẩn cấp
+- Kiểm tra tình trạng tài chính và đề xuất hỗ trợ học phí
+- Xếp nhóm học tập hoặc tư vấn học đường nếu cần
+```
+
+---
+
+### 3.4. Các hướng tiếp cận
+
+Về mặt kỹ thuật, bài toán có thể được tiếp cận theo nhiều hướng:
+
+| Hướng tiếp cận | Mô tả |
+|----------------|-------|
 | Phân loại nhị phân | Dự đoán sinh viên có thôi học hay không thôi học |
 | Chấm điểm rủi ro | Trả về điểm rủi ro từ 0 đến 100 |
-| Xếp hạng ưu tiên | Chọn ra nhóm sinh viên nguy cơ cao nhất để can thiệp trước |
+| Xếp hạng ưu tiên | Chọn ra nhóm sinh viên có nguy cơ cao nhất để can thiệp trước |
+| Phát hiện xu hướng | Phân tích dữ liệu theo thời gian để phát hiện sinh viên đang suy giảm |
+| Phân tích quan hệ xã hội | Phát hiện sinh viên bị cô lập hoặc thiếu kết nối |
 | Dự báo theo thời gian | Nếu mở rộng, có thể dự đoán thời điểm sinh viên có nguy cơ nghỉ học |
 
-Trong phạm vi báo cáo này, hướng tiếp cận phù hợp là:
+Trong phạm vi báo cáo này, hướng tiếp cận được lựa chọn là:
 
-> **Bài toán dự đoán rủi ro sinh viên thôi học, kết hợp chấm điểm rủi ro và đề xuất hành động can thiệp.**
+> **Bài toán tính điểm rủi ro, xếp hạng ưu tiên can thiệp và phát hiện sớm các dấu hiệu suy giảm của sinh viên.**
+
+Hướng tiếp cận này phù hợp với môn **Cấu trúc dữ liệu và Giải thuật** vì có thể phân rã thành các bài toán con như: tra cứu dữ liệu, tính điểm, sắp xếp/xếp hạng, xử lý chuỗi thời gian, duyệt đồ thị và hàng đợi ưu tiên.
+
+---
+
+### 3.5. Phân rã bài toán
+
+Bài toán tổng thể được phân rã thành các bài toán con sau:
+
+| STT | Bài toán con | Mục tiêu | Cấu trúc dữ liệu | Giải thuật | Độ phức tạp |
+|-----|--------------|----------|------------------|------------|-------------|
+| 1 | Tra cứu hồ sơ sinh viên | Tìm thông tin sinh viên theo MSSV | Bảng băm | Tra cứu trực tiếp | `O(1)` |
+| 2 | Xây dựng ma trận đặc trưng | Chuyển dữ liệu thô thành bảng đặc trưng | Mảng hai chiều | Duyệt và tổng hợp | `O(N·F)` |
+| 3 | Tính điểm rủi ro | Chấm điểm nguy cơ thôi học | Mảng luật | Duyệt luật | `O(N·R)` |
+| 4 | Phát hiện xu hướng học tập | Phát hiện GPA giảm, vắng tăng | Mảng chuỗi thời gian | Duyệt mảng, cửa sổ trượt, prefix sum | `O(N·T)` |
+| 5 | Phân tích quan hệ xã hội | Phát hiện sinh viên bị cô lập | Đồ thị danh sách kề | BFS/DFS | `O(V + E)` |
+| 6 | Chọn sinh viên ưu tiên can thiệp | Lấy top-k sinh viên rủi ro cao nhất | Heap | Top-k | `O(N log k)` |
+| 7 | Quản lý cảnh báo động | Cập nhật cảnh báo khi điểm rủi ro thay đổi | Indexed heap | Push/update/pop | `O(log N)` |
+| 8 | Chống trùng cảnh báo | Tránh tạo nhiều cảnh báo cho cùng một sinh viên trong một kỳ | Tập hợp | Kiểm tra thành viên | `O(1)` |
+
+**Trong đó:**
+
+- `N` = số sinh viên
+- `F` = số đặc trưng
+- `R` = số luật
+- `T` = số học kỳ
+- `V` = số đỉnh trong đồ thị
+- `E` = số cạnh trong đồ thị
+- `k` = số sinh viên cần lấy ra trong top-k
+
+---
+
+### 3.6. Phạm vi của báo cáo
+
+Trong phạm vi môn học, báo cáo tập trung vào các phần sau:
+
+1. **Xây dựng bộ luật tính điểm rủi ro.**
+2. **Sử dụng mảng hai chiều để biểu diễn ma trận đặc trưng.**
+3. **Sử dụng mảng chuỗi thời gian để phát hiện xu hướng giảm GPA.**
+4. **Sử dụng đồ thị danh sách kề để phát hiện sinh viên bị cô lập.**
+5. **Sử dụng heap để xếp hạng và chọn top-k sinh viên cần can thiệp trước.**
+
+Các phương pháp học máy như Logistic Regression, Random Forest, XGBoost được xem là **hướng phát triển mở rộng**, không phải trọng tâm của báo cáo này.
 
 ---
 
@@ -304,191 +442,588 @@ alerts = [
 
 ## 5. Cấu trúc dữ liệu đề xuất
 
-Hệ thống không nên chỉ dùng một cấu trúc dữ liệu duy nhất. Nên thiết kế theo nhiều lớp, tùy theo loại dữ liệu và mục đích xử lý.
+Hệ thống cảnh báo sớm sinh viên thôi học không nên chỉ sử dụng một cấu trúc dữ liệu duy nhất, vì bài toán bao gồm nhiều loại dữ liệu và nhiều thao tác khác nhau: tra cứu hồ sơ, tính điểm rủi ro, phân tích xu hướng học tập, phân tích quan hệ xã hội và xếp hạng cảnh báo để can thiệp.
+
+Do đó, hệ thống được thiết kế theo hướng phân tầng:
+
+```text
+Tầng lưu trữ:
+   - Cơ sở dữ liệu quan hệ
+
+Tầng xử lý:
+   - Bảng băm
+   - Ma trận đặc trưng
+   - Mảng chuỗi thời gian
+   - Đồ thị danh sách kề
+
+Tầng điều phối cảnh báo:
+   - Heap / hàng đợi ưu tiên
+   - Tập hợp chống trùng cảnh báo
+```
+
+---
 
 ### 5.1. Cơ sở dữ liệu quan hệ
 
-Dùng để lưu dữ liệu gốc của sinh viên, lớp học, môn học, điểm số, học phí và các sự kiện hỗ trợ.
+Cơ sở dữ liệu quan hệ lưu trữ dữ liệu gốc của nhà trường: thông tin sinh viên, lớp học, môn học, điểm số, chuyên cần, học phí, hoạt động ngoại khóa và các sự kiện hỗ trợ.
 
-Các thực thể chính có thể bao gồm:
+Các thực thể chính:
 
 ```text
-students
-semesters
-courses
-enrollments
-grades
-attendance
-finance
-support_events
-risk_scores
-alerts
-interventions
-feedback
+students, semesters, courses, enrollments, grades, attendance,
+finance, support_events, risk_scores, alerts, interventions, feedback
 ```
 
-Vai trò:
+**Vai trò:**
 
 - Lưu trữ dữ liệu có cấu trúc.
 - Dễ truy vấn theo sinh viên, học kỳ, môn học.
 - Đảm bảo tính toàn vẹn dữ liệu.
-- Tích hợp với hệ thống quản lý đào tạo hiện có của nhà trường.
+- Tích hợp với hệ thống quản lý đào tạo hiện có.
 
-Ví dụ mối quan hệ:
+**Ví dụ mối quan hệ:**
 
 - Một sinh viên có nhiều kết quả học tập theo từng học kỳ.
 - Một sinh viên có nhiều bản ghi chuyên cần.
 - Một sinh viên có nhiều khoản học phí.
 - Một sinh viên có thể nhận nhiều cảnh báo và được can thiệp nhiều lần.
 
+Tuy nhiên, cơ sở dữ liệu quan hệ chủ yếu thuộc **tầng lưu trữ**. Phần xử lý và tính toán sẽ dùng các cấu trúc dữ liệu phù hợp với giải thuật hơn: bảng băm, ma trận đặc trưng, mảng chuỗi thời gian, đồ thị và heap.
+
 ---
 
-### 5.2. Feature matrix cho mô hình dự đoán
+### 5.2. Bảng băm — tra cứu hồ sơ sinh viên
 
-Từ dữ liệu quan hệ, hệ thống cần tạo ra một bảng đặc trưng để phục vụ tính toán rủi ro.
+#### Bài toán
 
-Ma trận đặc trưng có kích thước N × F.
-Trong đó:
-- N là số sinh viên.
-- F là số đặc trưng rủi ro.
-Mỗi dòng đại diện cho một sinh viên trong một học kỳ.  
-Mỗi cột đại diện cho một đặc trưng rủi ro.
+Hệ thống cần tra cứu nhanh hồ sơ sinh viên theo mã sinh viên:
 
-Ví dụ các đặc trưng:
+```text
+Nhập MSSV = "SV001"
+Trả về hồ sơ của sinh viên SV001
+```
+
+Với hàng nghìn hoặc hàng chục nghìn sinh viên, duyệt tuần tự qua danh sách sẽ chậm. Bảng băm là cấu trúc phù hợp.
+
+#### Cấu trúc dữ liệu
+
+Bảng băm — trong Python cài đặt bằng `dict`.
+
+- **Khóa:** mã sinh viên
+- **Giá trị:** hồ sơ sinh viên
+
+#### Ví dụ
+
+```python
+students = {
+    "SV001": {
+        "name": "Nguyễn Văn A",
+        "class": "CA3",
+        "gpa": 1.8,
+        "failed": 4,
+        "absent_rate": 0.38,
+        "tuition_debt": 9000000,
+        "activity_score": 12
+    },
+    "SV002": {
+        "name": "Trần Thị B",
+        "class": "CA3",
+        "gpa": 3.2,
+        "failed": 0,
+        "absent_rate": 0.05,
+        "tuition_debt": 0,
+        "activity_score": 85
+    }
+}
+
+def get_student(mssv):
+    return students.get(mssv)
+```
+
+#### Độ phức tạp
+
+| Thao tác | Độ phức tạp trung bình |
+|----------|------------------------|
+| Tra cứu theo MSSV | `O(1)` |
+| Thêm sinh viên | `O(1)` |
+| Cập nhật hồ sơ | `O(1)` |
+| Xóa sinh viên | `O(1)` |
+
+#### Vì sao chọn bảng băm?
+
+Hệ thống thường xuyên tra cứu hồ sơ theo mã sinh viên — thao tác đọc nhiều hơn ghi. Bảng băm cho phép tra cứu nhanh hơn mảng hoặc danh sách liên kết.
+
+---
+
+### 5.3. Ma trận đặc trưng — tính điểm rủi ro
+
+#### Bài toán
+
+Từ dữ liệu gốc, hệ thống cần tạo bảng đặc trưng để tính điểm rủi ro.
 
 | Đặc trưng | Ý nghĩa |
-|---|---|
+|-----------|---------|
 | GPA | Điểm trung bình học kỳ |
 | Số môn rớt | Số học phần không đạt |
 | Tỷ lệ vắng học | Mức độ chuyên cần |
 | Nợ học phí | Áp lực tài chính |
-| Điểm rèn luyện | Mức độ tham gia phong trào, câu lạc bộ |
+| Điểm rèn luyện | Mức độ tham gia hoạt động |
 | Tiến độ tín chỉ | So với yêu cầu chương trình |
 | Số ngày không liên hệ cố vấn | Mức độ kết nối với hệ thống hỗ trợ |
 
-ví dụ: 
+#### Cấu trúc dữ liệu
+
+Ma trận hai chiều — trong Python dùng `list[list]`, kích thước `N × F`:
+
+- `N` = số sinh viên
+- `F` = số đặc trưng
+
+Mỗi dòng là một sinh viên trong một học kỳ; mỗi cột là một đặc trưng rủi ro.
+
+#### Ví dụ
+
+```python
+mssv_list = ["SV001", "SV002", "SV003"]
+
 feature_matrix = [
-    # MSSV, GPA, failed, absent, debt, activity, progress
-    ["SV001", 3.2, 0, 0.05, 0,         80, 0.90],
-    ["SV002", 1.8, 4, 0.38, 9000000,   12, 0.40],
-    ["SV003", 2.4, 2, 0.22, 4000000,   30, 0.65],
+    [1.8, 4, 0.38, 9000000, 12, 0.40, 95],
+    [3.2, 0, 0.05, 0,       85, 0.95, 10],
+    [2.4, 2, 0.22, 4000000, 35, 0.65, 70]
 ]
 
+feature_names = [
+    "gpa", "failed", "absent_rate", "tuition_debt",
+    "activity_score", "credit_progress", "days_no_advisor"
+]
+```
 
-Feature matrix giúp chuyển dữ liệu quản lý thô thành đầu vào phù hợp cho giải thuật tính điểm rủi ro hoặc mô hình học máy.
+Ý nghĩa: `feature_matrix[0]` là đặc trưng của SV001, `feature_matrix[1]` là của SV002, v.v.
 
+#### Độ phức tạp
+
+| Thao tác | Độ phức tạp |
+|----------|-------------|
+| Xây dựng ma trận đặc trưng | `O(N·F)` |
+| Truy cập đặc trưng của một sinh viên | `O(1)` |
+| Tính điểm rủi ro cho một sinh viên | `O(R)` |
+| Tính điểm rủi ro cho N sinh viên | `O(N·R)` |
+
+Trong đó `R` = số luật trong rule-based scoring.
+
+#### Vì sao chọn ma trận đặc trưng?
+
+Dữ liệu tính điểm rủi ro có dạng bảng `sinh viên × đặc trưng`. Ma trận giúp dễ duyệt từng sinh viên, dễ tính toán hàng loạt, dễ đưa vào hàm tính điểm và dễ mở rộng nếu sau này dùng học máy.
 
 ---
 
-### 5.3. Dữ liệu chuỗi thời gian
+### 5.4. Mảng chuỗi thời gian — phát hiện xu hướng
 
-Sinh viên không nên chỉ được đánh giá tại một thời điểm, mà cần theo dõi xu hướng qua nhiều học kỳ.
+#### Bài toán
 
-Ví dụ:
+Sinh viên không nên chỉ được đánh giá tại một thời điểm. Hệ thống cần theo dõi dữ liệu qua nhiều học kỳ để phát hiện xu hướng xấu:
 
 ```text
 Học kỳ 1: GPA = 3.2
 Học kỳ 2: GPA = 2.8
 Học kỳ 3: GPA = 2.2
+Học kỳ 4: GPA = 2.0
 ```
 
-Xu hướng giảm liên tục là tín hiệu rủi ro quan trọng.
+GPA giảm liên tục là tín hiệu rủi ro quan trọng.
 
-Các đặc trưng chuỗi thời gian hữu ích:
+#### Cấu trúc dữ liệu
 
-- Mức giảm GPA trong hai học kỳ gần nhất.
-- Tốc độ tăng tỷ lệ vắng học.
-- Số học kỳ liên tiếp có môn rớt.
-- Thời gian kéo dài tình trạng nợ học phí.
-- Mức giảm tham gia hoạt động so với kỳ trước.
+Mảng một chiều lưu dữ liệu theo thứ tự thời gian — trong Python dùng `list`. Ngoài ra dùng thêm **mảng tổng tiền tố** và **cửa sổ trượt**.
 
-Cấu trúc dữ liệu phù hợp:
+#### Ví dụ
 
-- Bảng lưu dữ liệu theo học kỳ.
-- Mảng chuỗi giá trị theo thời gian.
-- Cửa sổ trượt để tính xu hướng.
+```python
+time_series = {
+    "SV001": {
+        "semester": ["20241", "20242", "20251", "20252"],
+        "gpa": [3.2, 2.8, 2.2, 2.0],
+        "failed": [0, 1, 3, 4],
+        "absent_rate": [0.05, 0.12, 0.25, 0.38]
+    }
+}
+```
+
+#### Phát hiện GPA giảm liên tiếp
+
+```python
+def longest_decreasing_streak(values):
+    best = 0
+    current = 0
+    for i in range(1, len(values)):
+        if values[i] < values[i - 1]:
+            current += 1
+            best = max(best, current)
+        else:
+            current = 0
+    return best
+```
+
+```python
+gpa_history = [3.2, 2.8, 2.2, 2.0]
+print(longest_decreasing_streak(gpa_history))  # 3
+```
+
+→ GPA giảm liên tiếp qua 3 lần.
+
+#### Tính trung bình bằng mảng tổng tiền tố
+
+```python
+def build_prefix_sum(values):
+    prefix = [0]
+    total = 0
+    for value in values:
+        total += value
+        prefix.append(total)
+    return prefix
+
+
+def range_average(prefix, left, right):
+    if left < 0 or right >= len(prefix) - 1 or left > right:
+        return None
+    total = prefix[right + 1] - prefix[left]
+    count = right - left + 1
+    return total / count
+```
+
+```python
+gpa_history = [3.2, 2.8, 2.2, 2.0]
+prefix = build_prefix_sum(gpa_history)
+print(range_average(prefix, 1, 3))  # 2.3333...
+```
+
+#### Độ phức tạp
+
+Gọi `T` = số học kỳ.
+
+| Thao tác | Độ phức tạp |
+|----------|-------------|
+| Lưu chuỗi thời gian | `O(T)` |
+| Dựng mảng tổng tiền tố | `O(T)` |
+| Tính trung bình một đoạn | `O(1)` sau tiền xử lý |
+| Đếm số kỳ GPA giảm liên tiếp | `O(T)` |
+| Tính mức giảm trong w kỳ gần nhất | `O(1)` nếu truy cập trực tiếp |
+
+#### Vì sao chọn mảng chuỗi thời gian?
+
+Dữ liệu học tập có tính thời gian: `GPA kỳ 1 → kỳ 2 → kỳ 3 → ...`. Mảng chuỗi thời gian giúp phát hiện GPA giảm dần, số môn rớt tăng dần, tỷ lệ vắng tăng dần, nợ học phí kéo dài, điểm rèn luyện giảm dần.
 
 ---
 
-### 5.4. Graph cho quan hệ xã hội
+### 5.5. Đồ thị danh sách kề — phân tích quan hệ xã hội
 
-Graph có thể dùng để biểu diễn mối quan hệ giữa sinh viên và các thực thể khác trong môi trường học đường.
+#### Bài toán
 
-Các đỉnh có thể là:
+Hệ thống cần phân tích mối quan hệ giữa sinh viên với các thực thể khác trong môi trường học đường.
 
-```text
-Sinh viên
-Lớp học
-Câu lạc bộ
-Giảng viên
-Cố vấn học tập
-Nhóm học tập
-```
+- **Đỉnh:** sinh viên, lớp học, câu lạc bộ, giảng viên, cố vấn học tập, nhóm học tập.
+- **Cạnh:** học cùng lớp, tham gia cùng câu lạc bộ, được cố vấn bởi, học nhóm cùng nhau.
 
-Các cạnh có thể là:
-
-```text
-Học cùng lớp
-Tham gia cùng câu lạc bộ
-Được cố vấn bởi
-Học nhóm cùng nhau
-```
-
-Ứng dụng:
+**Ứng dụng:**
 
 - Phát hiện sinh viên bị cô lập.
 - Phát hiện nhóm bạn có cùng nguy cơ bỏ học.
 - Phân tích ảnh hưởng xã hội.
-- Đánh giá mức độ kết nối của sinh viên với cộng đồng học tập.
+- Đánh giá mức độ kết nối với cộng đồng học tập.
 
-Cấu trúc dữ liệu phù hợp:
+#### Cấu trúc dữ liệu
 
-- Danh sách kề.
-- Danh sách cạnh.
-- Đồ thị quan hệ nếu triển khai mở rộng.
+Đồ thị danh sách kề — trong Python dùng `dict[list]` hoặc `defaultdict(list)`.
+
+#### Ví dụ
+
+```python
+social_graph = {
+    "SV001": ["SV002", "SV003"],
+    "SV002": ["SV001", "SV003"],
+    "SV003": ["SV001", "SV002"],
+    "SV004": ["SV005"],
+    "SV005": ["SV004"],
+    "SV006": []
+}
+```
+
+Ý nghĩa: SV001 quan hệ với SV002 và SV003; SV004 quan hệ với SV005; SV006 không có quan hệ nào.
+
+#### BFS phát hiện thành phần liên thông
+
+```python
+from collections import deque
+
+
+def component_size(start, graph):
+    visited = {start}
+    queue = deque([start])
+    size = 0
+
+    while queue:
+        u = queue.popleft()
+        size += 1
+        for v in graph.get(u, []):
+            if v not in visited:
+                visited.add(v)
+                queue.append(v)
+
+    return size
+```
+
+```python
+print(component_size("SV001", social_graph))  # 3
+print(component_size("SV006", social_graph))  # 1
+```
+
+SV001, SV002, SV003 nằm trong cùng một nhóm liên thông (kích thước 3); SV006 cô lập (kích thước 1).
+
+#### Độ phức tạp
+
+Gọi `V` = số đỉnh, `E` = số cạnh.
+
+| Thao tác | Độ phức tạp |
+|----------|-------------|
+| Duyệt đồ thị bằng BFS | `O(V + E)` |
+| Duyệt đồ thị bằng DFS | `O(V + E)` |
+| Tìm thành phần liên thông | `O(V + E)` |
+| Đếm số bạn của một sinh viên | `O(1)` nếu đã lưu danh sách kề |
+
+#### Vì sao chọn danh sách kề?
+
+Đồ thị quan hệ sinh viên thường là **đồ thị thưa** — mỗi sinh viên chỉ có một số quan hệ nhất định, không kết nối với tất cả sinh viên khác.
+
+Nếu dùng ma trận kề `V × V` với 20.000 sinh viên: `20.000 × 20.000 = 400.000.000 ô nhớ` — rất tốn bộ nhớ. Danh sách kề chỉ lưu các quan hệ thật sự tồn tại, tiết kiệm hơn và phù hợp hơn.
 
 ---
 
-### 5.5. Priority queue cho hàng đợi cảnh báo
+### 5.6. Heap / hàng đợi ưu tiên — cảnh báo
 
-Khi hệ thống tạo ra nhiều cảnh báo, cần xử lý theo mức ưu tiên.
+#### Bài toán
 
-Ví dụ:
+Khi hệ thống tạo ra nhiều cảnh báo, cần ưu tiên xử lý sinh viên có điểm rủi ro cao nhất.
 
 | Sinh viên | Điểm rủi ro |
-|---|---:|
+|-----------|-------------|
 | SV_A | 92 |
 | SV_C | 88 |
 | SV_B | 61 |
 | SV_D | 35 |
 
-Priority queue giúp lấy sinh viên có mức rủi ro cao nhất ra trước để cố vấn học tập can thiệp kịp thời.
+Cần lấy `SV_A` ra trước.
 
-Cấu trúc dữ liệu phù hợp:
+#### Cấu trúc dữ liệu
 
-- Heap.
-- Hàng đợi ưu tiên.
-- Danh sách cảnh báo được sắp xếp theo điểm rủi ro giảm dần.
+Heap nhị phân — trong Python dùng `heapq`. Lưu ý `heapq` mặc định là **min-heap**; muốn lấy phần tử lớn nhất, lưu số âm (`-score`).
+
+#### Ví dụ
+
+```python
+import heapq
+
+alerts = [("SV_A", 92), ("SV_C", 88), ("SV_B", 61), ("SV_D", 35)]
+
+heap = [(-score, mssv) for mssv, score in alerts]
+heapq.heapify(heap)
+
+while heap:
+    neg_score, mssv = heapq.heappop(heap)
+    print(mssv, -neg_score)
+```
+
+Kết quả:
+
+```text
+SV_A 92
+SV_C 88
+SV_B 61
+SV_D 35
+```
+
+#### Bài toán top-k
+
+Nếu cần chọn `k` sinh viên rủi ro cao nhất từ danh sách lớn:
+
+- Sắp xếp toàn bộ: `O(N log N)`
+- Heap top-k: `O(N log k)`
+
+Vì `k` nhỏ hơn `N` rất nhiều, heap top-k hiệu quả hơn.
+
+```python
+import heapq
+
+
+def top_k_alerts(alerts, k):
+    heap = []
+    for mssv, score in alerts:
+        if len(heap) < k:
+            heapq.heappush(heap, (score, mssv))
+        elif score > heap[0][0]:
+            heapq.heapreplace(heap, (score, mssv))
+    return [(mssv, score) for score, mssv in sorted(heap, reverse=True)]
+```
+
+```python
+alerts = [("SV_A", 92), ("SV_C", 88), ("SV_B", 61), ("SV_D", 35)]
+for mssv, score in top_k_alerts(alerts, 2):
+    print(mssv, score)
+```
+
+Kết quả:
+
+```text
+SV_A 92
+SV_C 88
+```
+
+#### Độ phức tạp
+
+| Thao tác | Độ phức tạp |
+|----------|-------------|
+| Thêm cảnh báo vào heap | `O(log N)` |
+| Lấy cảnh báo ưu tiên cao nhất | `O(log N)` |
+| Chọn top-k bằng heap | `O(N log k)` |
+| Sắp xếp toàn bộ danh sách | `O(N log N)` |
+| Cập nhật điểm rủi ro trong indexed heap | `O(log N)` |
+
+#### Vì sao chọn heap?
+
+Heap phù hợp vì hệ thống cần: lấy sinh viên rủi ro cao nhất ra xử lý trước, thêm cảnh báo mới, cập nhật điểm rủi ro, chọn top-k sinh viên nguy cấp. Heap hiệu quả hơn danh sách thường hoặc danh sách liên kết trong các thao tác ưu tiên.
+
+---
+
+### 5.7. Tập hợp — chống trùng cảnh báo
+
+#### Bài toán
+
+Một sinh viên trong một học kỳ chỉ nên có một cảnh báo đang mở. Nếu hệ thống tạo cảnh báo nhiều lần, cố vấn học tập sẽ bị trùng thông tin.
+
+```text
+SV001 đã có cảnh báo trong học kỳ 20252
+→ Không nên tạo thêm cảnh báo mới cho SV001 trong cùng kỳ đó
+```
+
+#### Cấu trúc dữ liệu
+
+Tập hợp — trong Python dùng `set`.
+
+#### Ví dụ
+
+```python
+opened_alerts = {"SV001", "SV004"}
+
+def should_create_alert(mssv):
+    return mssv not in opened_alerts
+
+print(should_create_alert("SV001"))  # False
+print(should_create_alert("SV007"))  # True
+```
+
+#### Độ phức tạp
+
+| Thao tác | Độ phức tạp trung bình |
+|----------|------------------------|
+| Kiểm tra đã có cảnh báo chưa | `O(1)` |
+| Thêm cảnh báo | `O(1)` |
+| Xóa cảnh báo | `O(1)` |
+
+---
+
+### 5.8. Bảng tổng hợp cấu trúc dữ liệu
+
+| Bài toán | Cấu trúc dữ liệu | Python tương ứng | Độ phức tạp |
+|----------|------------------|------------------|-------------|
+| Tra cứu hồ sơ sinh viên | Bảng băm | `dict` | `O(1)` trung bình |
+| Lưu đặc trưng tính điểm | Ma trận hai chiều | `list[list]` | `O(N·F)` để xây dựng |
+| Tính điểm rủi ro | Mảng luật | `list` | `O(R)` mỗi sinh viên |
+| Lưu GPA theo học kỳ | Mảng chuỗi thời gian | `list` | `O(T)` |
+| Tính trung bình theo khoảng kỳ | Mảng tổng tiền tố | `list` | `O(1)` truy vấn |
+| Phát hiện GPA giảm liên tiếp | Duyệt mảng | `list` | `O(T)` |
+| Phân tích quan hệ xã hội | Đồ thị danh sách kề | `dict[list]` | `O(V + E)` |
+| Phát hiện sinh viên cô lập | BFS / DFS | `deque` | `O(V + E)` |
+| Chọn top-k sinh viên rủi ro cao nhất | Heap | `heapq` | `O(N log k)` |
+| Lấy cảnh báo ưu tiên cao nhất | Heap | `heapq` | `O(log N)` |
+| Cập nhật điểm rủi ro động | Indexed heap | Tự viết | `O(log N)` |
+| Chống trùng cảnh báo | Tập hợp | `set` | `O(1)` trung bình |
+
+---
+
+### 5.9. Kết luận về cấu trúc dữ liệu
+
+Hệ thống không sử dụng một cấu trúc dữ liệu duy nhất. Mỗi cấu trúc được chọn để giải quyết một bài toán cụ thể:
+
+```text
+Bảng băm        → tra cứu sinh viên theo MSSV
+Ma trận 2 chiều → lưu đặc trưng tính điểm rủi ro
+Mảng thời gian  → phát hiện xu hướng giảm GPA, tăng vắng học
+Đồ thị kề       → phát hiện sinh viên cô lập
+Heap            → xếp hạng cảnh báo và chọn top-k
+Set             → chống trùng cảnh báo
+```
+
+Giá trị của việc lựa chọn đúng cấu trúc dữ liệu là giúp hệ thống: tra cứu nhanh hồ sơ sinh viên, tính điểm rủi ro hiệu quả, phát hiện sớm xu hướng suy giảm, phân tích quan hệ xã hội, ưu tiên can thiệp đúng sinh viên, tránh cảnh báo trùng lặp và có thể mở rộng khi số lượng sinh viên tăng lên.
 
 ---
 
 ## 6. Giải thuật đề xuất
 
-### 6.1. Rule-based scoring
+Hệ thống cảnh báo sớm sinh viên thôi học không nên chỉ sử dụng một giải thuật duy nhất. Bài toán gồm nhiều công việc khác nhau: tính điểm rủi ro, phát hiện xu hướng học tập, phân tích quan hệ xã hội, xếp hạng cảnh báo và cập nhật cảnh báo theo thời gian.
 
-Đây là phương pháp tính điểm rủi ro dựa trên các luật nghiệp vụ.
+Vì vậy, giải thuật đề xuất được chia thành các nhóm sau:
 
-Ưu điểm:
+```text
+1. Giải thuật tính điểm rủi ro bằng luật
+2. Giải thuật xếp hạng và chọn top-k sinh viên rủi ro cao nhất
+3. Giải thuật phát hiện xu hướng giảm theo chuỗi thời gian
+4. Giải thuật phát hiện sinh viên bị cô lập bằng đồ thị
+5. Giải thuật cập nhật hàng đợi cảnh báo động
+6. Hướng mở rộng: học máy hoặc mô hình kết hợp
+```
 
-- Dễ hiểu.
-- Dễ triển khai.
-- Giải thích được lý do cảnh báo.
-- Phù hợp khi chưa có nhiều dữ liệu lịch sử để huấn luyện mô hình machine learning.
+---
 
-Ví dụ bộ luật:
+### 6.1. Giải thuật tính điểm rủi ro bằng luật
 
-| Điều kiện | Điểm rủi ro cộng thêm |
-|---|---:|
+#### Mục tiêu
+
+Tính điểm rủi ro thôi học cho từng sinh viên dựa trên các đặc trưng học tập, chuyên cần, tài chính, hoạt động và kết nối với cố vấn học tập.
+
+#### Đầu vào
+
+- Vector đặc trưng của sinh viên.
+- Danh sách các luật rủi ro.
+
+Ví dụ đặc trưng: `GPA`, số môn rớt, tỷ lệ vắng học, nợ học phí, điểm rèn luyện, tiến độ tín chỉ, số ngày không liên hệ cố vấn học tập.
+
+#### Đầu ra
+
+```text
+1. Điểm rủi ro từ 0 đến 100
+2. Danh sách lý do khiến sinh viên có nguy cơ
+```
+
+#### Ý tưởng giải thuật
+
+Sử dụng **rule-based scoring**. Mỗi luật gồm:
+
+```text
+- Điều kiện
+- Trọng số điểm
+- Lý do cảnh báo
+```
+
+Giải thuật duyệt qua toàn bộ danh sách luật. Nếu sinh viên thỏa mãn một luật, hệ thống cộng điểm rủi ro tương ứng. Cuối cùng, điểm rủi ro được chặn tối đa ở 100.
+
+#### Công thức
+
+```text
+risk_score = min(100, tổng điểm của các luật được kích hoạt)
+```
+
+#### Ví dụ bộ luật
+
+| Điều kiện | Điểm cộng |
+|-----------|-----------|
 | GPA dưới 2.0 | +30 |
 | GPA từ 2.0 đến dưới 2.5 | +20 |
 | GPA từ 2.5 đến dưới 3.0 | +10 |
@@ -497,131 +1032,657 @@ Ví dụ bộ luật:
 | Có 1 môn rớt | +5 |
 | Tỷ lệ vắng học trên 30% | +25 |
 | Tỷ lệ vắng học từ 20% đến 30% | +15 |
-| Tỷ lệ vắng học từ 10% đến 20% | +5 |
+| Tỷ lệ vắng học từ 10% đến dưới 20% | +5 |
 | Nợ học phí trên 8 triệu đồng | +20 |
 | Nợ học phí từ 3 triệu đến 8 triệu đồng | +10 |
 | Điểm rèn luyện dưới 20 | +10 |
 | Điểm rèn luyện từ 20 đến dưới 40 | +5 |
 | Tiến độ tín chỉ dưới 50% | +15 |
 | Hơn 90 ngày không liên hệ cố vấn | +10 |
-| Hơn 60 ngày không liên hệ cố vấn | +5 |
+| Từ 60 đến 90 ngày không liên hệ cố vấn | +5 |
 
-Công thức tổng quát:
-
-```text
-risk_score = min(100, tổng điểm rủi ro của các luật được kích hoạt)
-```
-
-Ví dụ minh họa:
-
-Sinh viên A có:
-
-- GPA = 1.8.
-- Số môn rớt = 4.
-- Tỷ lệ vắng học = 38%.
-- Nợ học phí = 9 triệu đồng.
-- Điểm rèn luyện = 12.
-- Tiến độ tín chỉ = 40%.
-- Hơn 90 ngày không liên hệ cố vấn.
-
-Điểm rủi ro:
+#### Mã giả
 
 ```text
-GPA dưới 2.0: +30
-Từ 4 môn rớt trở lên: +25
-Vắng học trên 30%: +25
-Nợ học phí trên 8 triệu: +20
-Điểm rèn luyện dưới 20: +10
-Tiến độ tín chỉ dưới 50%: +15
-Hơn 90 ngày không liên hệ cố vấn: +10
+function compute_risk(feature):
+    score = 0
+    reasons = []
 
-Tổng = 135
-Giới hạn tối đa = 100
+    for rule in rules:
+        if rule.condition(feature):
+            score = score + rule.weight
+            reasons.append(rule.name)
+
+    score = min(score, 100)
+    return score, reasons
 ```
 
-Kết luận:
+#### Cài đặt Python minh họa
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class Feature:
+    gpa: float
+    failed: int
+    absent_rate: float
+    tuition_debt: float
+    activity_score: int
+    credit_progress: float
+    days_no_advisor: int
+
+
+RULES = [
+    ("GPA dưới 2.0", 30, lambda f: f.gpa < 2.0),
+    ("GPA từ 2.0 đến dưới 2.5", 20, lambda f: 2.0 <= f.gpa < 2.5),
+    ("GPA từ 2.5 đến dưới 3.0", 10, lambda f: 2.5 <= f.gpa < 3.0),
+
+    ("Số môn rớt từ 4 trở lên", 25, lambda f: f.failed >= 4),
+    ("Số môn rớt từ 2 đến 3", 15, lambda f: 2 <= f.failed <= 3),
+    ("Có 1 môn rớt", 5, lambda f: f.failed == 1),
+
+    ("Tỷ lệ vắng học trên 30%", 25, lambda f: f.absent_rate > 0.30),
+    ("Tỷ lệ vắng học từ 20% đến 30%", 15, lambda f: 0.20 <= f.absent_rate <= 0.30),
+    ("Tỷ lệ vắng học từ 10% đến dưới 20%", 5, lambda f: 0.10 <= f.absent_rate < 0.20),
+
+    ("Nợ học phí trên 8 triệu", 20, lambda f: f.tuition_debt > 8_000_000),
+    ("Nợ học phí từ 3 đến 8 triệu", 10, lambda f: 3_000_000 <= f.tuition_debt <= 8_000_000),
+
+    ("Điểm rèn luyện dưới 20", 10, lambda f: f.activity_score < 20),
+    ("Điểm rèn luyện từ 20 đến dưới 40", 5, lambda f: 20 <= f.activity_score < 40),
+
+    ("Tiến độ tín chỉ dưới 50%", 15, lambda f: f.credit_progress < 0.50),
+
+    ("Hơn 90 ngày không liên hệ cố vấn", 10, lambda f: f.days_no_advisor > 90),
+    ("Từ 60 đến 90 ngày không liên hệ cố vấn", 5, lambda f: 60 < f.days_no_advisor <= 90),
+]
+
+
+def compute_risk(feature: Feature):
+    score = 0
+    reasons = []
+    for rule_name, weight, condition in RULES:
+        if condition(feature):
+            score += weight
+            reasons.append(rule_name)
+    return min(score, 100), reasons
+```
+
+#### Ví dụ
+
+```python
+sv_a = Feature(
+    gpa=1.8, failed=4, absent_rate=0.38,
+    tuition_debt=9_000_000, activity_score=12,
+    credit_progress=0.40, days_no_advisor=95
+)
+
+score, reasons = compute_risk(sv_a)
+print(score)
+print(reasons)
+```
+
+Kết quả:
 
 ```text
-Risk score = 100
-Mức cảnh báo = RẤT CAO
+100
+['GPA dưới 2.0', 'Số môn rớt từ 4 trở lên', 'Tỷ lệ vắng học trên 30%',
+ 'Nợ học phí trên 8 triệu', 'Điểm rèn luyện dưới 20',
+ 'Tiến độ tín chỉ dưới 50%', 'Hơn 90 ngày không liên hệ cố vấn']
 ```
+
+#### Độ phức tạp
+
+Gọi `R` = số luật.
+
+| Thao tác | Độ phức tạp |
+|----------|-------------|
+| Tính điểm cho một sinh viên | `O(R)` |
+| Tính điểm cho N sinh viên | `O(N·R)` |
+
+#### Vì sao chọn giải thuật này?
+
+Ưu điểm: dễ hiểu, dễ triển khai, dễ giải thích lý do cảnh báo, không cần dữ liệu lịch sử đã gán nhãn, phù hợp với giai đoạn đầu của hệ thống.
 
 ---
 
-### 6.2. Machine learning classification
+### 6.2. Giải thuật xếp hạng và chọn top-k sinh viên rủi ro cao nhất
 
-Khi nhà trường có dữ liệu lịch sử với nhãn sinh viên thôi học, có thể dùng các mô hình học máy để dự đoán xác suất thôi học.
+#### Mục tiêu
 
-Các mô hình phù hợp:
+Chọn ra `k` sinh viên có điểm rủi ro cao nhất để ưu tiên can thiệp. Ví dụ: `N = 20.000` sinh viên, `k = 50` sinh viên nguy cấp nhất.
 
-| Mô hình | Đặc điểm |
-|---|---|
-| Logistic Regression | Đơn giản, dễ giải thích |
-| Decision Tree | Trực quan, dễ hiểu |
-| Random Forest | Mạnh, phù hợp dữ liệu bảng |
-| Gradient Boosting | Hiệu suất cao trên dữ liệu có cấu trúc |
-| XGBoost / LightGBM | Phù hợp bài toán phân loại quy mô vừa và lớn |
+#### Đầu vào
 
-Đầu vào:
+- Danh sách cảnh báo của N sinh viên dạng `(mssv, risk_score)`.
+- Số lượng `k` sinh viên cần chọn.
+
+#### Đầu ra
+
+Danh sách k sinh viên có điểm rủi ro cao nhất, sắp xếp giảm dần theo điểm rủi ro.
+
+#### Ý tưởng giải thuật
+
+| Cách | Độ phức tạp | Nhận xét |
+|------|-------------|----------|
+| Sắp xếp toàn bộ danh sách | `O(N log N)` | Dễ, nhưng không tối ưu nếu k nhỏ |
+| Dùng heap top-k | `O(N log k)` | Phù hợp khi k nhỏ hơn N nhiều |
+| Quickselect | `O(N)` trung bình | Nhanh nhưng khó giải thích hơn |
+
+Trong báo cáo này, giải thuật được đề xuất là: **dùng min-heap kích thước k** để chọn top-k sinh viên có điểm rủi ro cao nhất.
+
+#### Ý tưởng của min-heap kích thước k
+
+Duy trì một heap chứa `k` sinh viên có điểm cao nhất đã gặp. Khi duyệt một sinh viên mới:
+
+- Nếu heap chưa đủ `k` phần tử, thêm vào heap.
+- Nếu heap đã đủ `k` phần tử và điểm của sinh viên mới lớn hơn phần tử nhỏ nhất trong heap, thay phần tử nhỏ nhất đó bằng sinh viên mới.
+
+Cuối cùng, heap chứa `k` sinh viên có điểm rủi ro cao nhất.
+
+#### Mã giả
 
 ```text
-Vector đặc trưng của sinh viên trong một học kỳ
+function top_k_alerts(alerts, k):
+    heap = empty min-heap
+
+    for alert in alerts:
+        if heap.size < k:
+            heap.push(alert)
+        else if alert.score > heap.min().score:
+            heap.replace_min(alert)
+
+    return heap sorted by score descending
 ```
 
-Đầu ra:
+#### Cài đặt Python
+
+```python
+import heapq
+
+
+def top_k_alerts(alerts, k):
+    if k <= 0:
+        return []
+
+    heap = []
+    for mssv, score in alerts:
+        item = (score, mssv)
+        if len(heap) < k:
+            heapq.heappush(heap, item)
+        elif score > heap[0][0]:
+            heapq.heapreplace(heap, item)
+
+    return [(mssv, score) for score, mssv in sorted(heap, reverse=True)]
+```
+
+#### Ví dụ
+
+```python
+alerts = [
+    ("SV001", 92), ("SV002", 61), ("SV003", 100),
+    ("SV004", 35), ("SV005", 88), ("SV006", 79),
+]
+
+for mssv, score in top_k_alerts(alerts, 3):
+    print(mssv, score)
+```
+
+Kết quả:
 
 ```text
-Xác suất thôi học
-Điểm rủi ro
-Mức cảnh báo
-Lý do chính
-Hành động đề xuất
+SV003 100
+SV001 92
+SV005 88
 ```
 
-Ưu điểm:
+#### Độ phức tạp
 
-- Tự học từ dữ liệu.
-- Phát hiện được các mẫu phức tạp.
-- Có thể cải thiện theo thời gian khi có thêm dữ liệu phản hồi.
+Gọi `N` = số cảnh báo, `k` = số sinh viên cần chọn.
 
-Nhược điểm:
+| Cách | Độ phức tạp |
+|------|-------------|
+| Sắp xếp toàn bộ | `O(N log N)` |
+| Heap top-k | `O(N log k)` |
 
-- Cần dữ liệu lịch sử đủ tốt.
-- Dễ gặp vấn đề mất cân bằng nhãn vì số sinh viên thôi học thường ít.
-- Cần cơ chế giải thích để cố vấn học tập tin tưởng kết quả.
+Vì trong thực tế `N` lớn, `k` nhỏ, nên heap top-k phù hợp hơn.
 
 ---
 
-### 6.3. Hybrid rule-based và machine learning
+### 6.3. Giải thuật phát hiện xu hướng giảm theo chuỗi thời gian
 
-Hướng thực tế và đáng đề xuất nhất là kết hợp cả hai phương pháp.
+#### Mục tiêu
+
+Phát hiện sinh viên đang có xu hướng suy giảm học tập qua nhiều học kỳ:
+
+```text
+Học kỳ 1: GPA = 3.2
+Học kỳ 2: GPA = 2.8
+Học kỳ 3: GPA = 2.2
+Học kỳ 4: GPA = 2.0
+```
+
+GPA giảm liên tục là tín hiệu rủi ro.
+
+#### Đầu vào
+
+Chuỗi giá trị theo thời gian của một sinh viên, ví dụ `gpa_history = [3.2, 2.8, 2.2, 2.0]`.
+
+#### Đầu ra
+
+```text
+1. Số lần giảm liên tiếp dài nhất
+2. Mức giảm trong w học kỳ gần nhất
+3. Cờ cảnh báo xu hướng xấu
+```
+
+#### 6.3.1. Đếm chuỗi giảm liên tiếp
+
+Duyệt mảng từ trái sang phải. Nếu giá trị hiện tại nhỏ hơn giá trị trước đó thì tăng độ dài chuỗi giảm; nếu không thì đặt lại về 0.
+
+```python
+def longest_decreasing_streak(values):
+    best = 0
+    current = 0
+    for i in range(1, len(values)):
+        if values[i] < values[i - 1]:
+            current += 1
+            best = max(best, current)
+        else:
+            current = 0
+    return best
+```
+
+```python
+gpa_history = [3.2, 2.8, 2.2, 2.0]
+print(longest_decreasing_streak(gpa_history))  # 3
+```
+
+#### 6.3.2. Tính mức giảm trong w kỳ gần nhất
+
+Với `w = 3` và `gpa_history = [3.2, 2.8, 2.2, 2.0]`:
+
+```text
+drop = gpa_history[-3] - gpa_history[-1] = 2.8 - 2.0 = 0.8
+```
+
+```python
+def drop_over_last_window(values, window_size=3):
+    if len(values) < window_size:
+        return 0
+    return values[-window_size] - values[-1]
+```
+
+#### 6.3.3. Cảnh báo xu hướng GPA giảm
+
+Điều kiện: GPA giảm liên tiếp ít nhất 2 lần **và** mức giảm trong 3 kỳ gần nhất từ 0.5 trở lên.
+
+```python
+def has_gpa_decline_alert(values, window_size=3, min_drop=0.5, min_streak=2):
+    streak = longest_decreasing_streak(values)
+    drop = drop_over_last_window(values, window_size)
+    return streak >= min_streak and drop >= min_drop
+```
+
+```python
+gpa_history = [3.2, 2.8, 2.2, 2.0]
+print(has_gpa_decline_alert(gpa_history))  # True
+```
+
+#### Độ phức tạp
+
+Gọi `T` = số học kỳ.
+
+| Bài toán | Độ phức tạp |
+|----------|-------------|
+| Đếm chuỗi giảm liên tiếp | `O(T)` |
+| Tính mức giảm trong w kỳ gần nhất | `O(1)` nếu truy cập trực tiếp |
+| Kiểm tra cảnh báo xu hướng | `O(T)` |
+
+Nếu cần tính trung bình nhiều đoạn học kỳ, có thể dùng thêm mảng tổng tiền tố để truy vấn `O(1)` sau khi tiền xử lý `O(T)`.
+
+---
+
+### 6.4. Giải thuật phát hiện sinh viên bị cô lập bằng đồ thị
+
+#### Mục tiêu
+
+Phát hiện sinh viên có ít kết nối xã hội, có thể dẫn đến nguy cơ thôi học cao hơn.
+
+#### Đầu vào
+
+- Đồ thị quan hệ xã hội.
+- Điểm rủi ro của sinh viên.
+
+Đồ thị có thể gồm:
+
+```text
+Đỉnh: sinh viên, lớp học, câu lạc bộ, nhóm học tập, cố vấn học tập
+Cạnh: học cùng lớp, tham gia câu lạc bộ, học nhóm, được cố vấn
+```
+
+#### Đầu ra
+
+Danh sách sinh viên có nguy cơ cao và bị cô lập.
+
+#### Ý tưởng giải thuật
+
+Sử dụng đồ thị danh sách kề và duyệt BFS hoặc DFS. Một sinh viên được xem là đáng chú ý nếu:
+
+```text
+1. Có điểm rủi ro cao
+2. Có bậc đỉnh thấp
+3. Thuộc thành phần liên thông nhỏ
+```
+
+Ví dụ điều kiện: `risk_score >= 60`, `degree <= 1`, `component_size <= 3`.
+
+#### Cài đặt Python
+
+```python
+from collections import deque
+
+
+def component_size(start, graph):
+    visited = {start}
+    queue = deque([start])
+    size = 0
+    while queue:
+        u = queue.popleft()
+        size += 1
+        for v in graph.get(u, []):
+            if v not in visited:
+                visited.add(v)
+                queue.append(v)
+    return size
+
+
+def is_isolated_high_risk(mssv, graph, risk_scores,
+                          risk_threshold=60,
+                          max_degree=1,
+                          max_component_size=3):
+    score = risk_scores.get(mssv, 0)
+    degree = len(graph.get(mssv, []))
+    size = component_size(mssv, graph)
+    return (
+        score >= risk_threshold
+        and degree <= max_degree
+        and size <= max_component_size
+    )
+```
+
+#### Ví dụ
+
+```python
+social_graph = {
+    "SV001": ["SV002", "SV003"], "SV002": ["SV001", "SV003"],
+    "SV003": ["SV001", "SV002"], "SV004": ["SV005"],
+    "SV005": ["SV004"], "SV006": []
+}
+
+risk_scores = {
+    "SV001": 85, "SV002": 40, "SV003": 55,
+    "SV004": 70, "SV005": 65, "SV006": 90,
+}
+
+print(is_isolated_high_risk("SV006", social_graph, risk_scores))  # True
+```
+
+`SV006` có điểm rủi ro 90, không có quan hệ nào, thành phần liên thông chỉ có 1 đỉnh.
+
+#### Độ phức tạp
+
+Gọi `V` = số đỉnh, `E` = số cạnh.
+
+| Thao tác | Độ phức tạp |
+|----------|-------------|
+| BFS / DFS một thành phần | `O(V + E)` |
+| Tính bậc đỉnh | `O(1)` nếu đã lưu danh sách kề |
+| Kiểm tra cô lập cho một sinh viên | `O(V + E)` nếu tính lại thành phần liên thông |
+
+Nếu cần kiểm tra cho nhiều sinh viên, nên duyệt đồ thị **một lần** để tính kích thước thành phần liên thông cho tất cả đỉnh. Khi đó độ phức tạp tổng là `O(V + E)`.
+
+---
+
+### 6.5. Giải thuật cập nhật hàng đợi cảnh báo động
+
+#### Mục tiêu
+
+Trong hệ thống thực tế, điểm rủi ro của sinh viên có thể thay đổi theo thời gian. Ví dụ SV001 đang có risk score = 60, sau đó phát hiện vắng thêm nhiều buổi, risk score tăng lên 85. Hệ thống cần cập nhật ưu tiên của SV001 trong hàng đợi cảnh báo.
+
+#### Đầu vào
+
+- Hàng đợi cảnh báo hiện tại.
+- Điểm rủi ro mới của một sinh viên.
+
+#### Đầu ra
+
+Hàng đợi cảnh báo đã được cập nhật theo điểm rủi ro mới.
+
+#### Cách 1: Heap với xóa lười (lazy deletion)
 
 Ý tưởng:
 
-- Machine learning dự đoán xác suất rủi ro tổng quát.
-- Rule-based bổ sung các luật nghiệp vụ quan trọng.
-- Kết quả cuối cùng vừa có tính dự đoán, vừa giải thích được.
+- Mỗi lần điểm rủi ro thay đổi, thêm một bản ghi mới vào heap.
+- Khi lấy cảnh báo ra, kiểm tra bản ghi đó còn hợp lệ không.
+- Nếu điểm trong heap không khớp với điểm hiện tại của sinh viên, bỏ qua bản ghi đó.
 
-Ví dụ công thức tổng hợp:
+Ưu điểm: dễ cài đặt, không cần sửa phần tử nằm giữa heap.
+Nhược điểm: heap có thể chứa nhiều bản ghi cũ, cần kiểm tra hợp lệ khi lấy cảnh báo.
 
-```text
-final_risk_score =
-    0.6 * ml_risk_score
-  + 0.4 * rule_based_risk_score
+```python
+import heapq
+
+
+class AlertQueueLazy:
+    def __init__(self):
+        self.heap = []
+        self.current_scores = {}
+
+    def push(self, mssv, score):
+        self.current_scores[mssv] = score
+        heapq.heappush(self.heap, (-score, mssv))
+
+    def update(self, mssv, new_score):
+        self.push(mssv, new_score)
+
+    def pop_valid(self):
+        while self.heap:
+            neg_score, mssv = heapq.heappop(self.heap)
+            score = -neg_score
+            if self.current_scores.get(mssv) == score:
+                return mssv, score
+        return None
 ```
 
-Hoặc có thể dùng rule-based như một lớp hiệu chỉnh:
+#### Cách 2: Indexed heap
+
+Ý tưởng:
+
+- Heap lưu các sinh viên theo điểm rủi ro.
+- Bảng băm lưu vị trí của từng sinh viên trong heap.
+- Khi điểm rủi ro thay đổi, cập nhật trực tiếp phần tử trong heap rồi sắp xếp lại heap.
+
+Ưu điểm: không tạo bản ghi cũ, cập nhật hiệu quả, phù hợp hơn nếu muốn trình bày sâu về cấu trúc dữ liệu.
+
+Mã giả:
 
 ```text
-Nếu sinh viên có nợ học phí nghiêm trọng hoặc vắng học quá cao,
-nâng mức cảnh báo lên ít nhất là CAO.
+IndexedMaxHeap:
+    heap: array of (score, mssv)
+    position: dictionary mssv -> index
+
+function push_or_update(mssv, new_score):
+    if mssv not in position:
+        add (new_score, mssv) to heap
+        position[mssv] = last_index
+        sift_up(last_index)
+    else:
+        i = position[mssv]
+        old_score = heap[i].score
+        heap[i].score = new_score
+        if new_score > old_score:
+            sift_up(i)
+        else if new_score < old_score:
+            sift_down(i)
+
+function extract_max():
+    swap root with last element
+    remove last element
+    delete position of removed mssv
+    sift_down(root)
+    return removed element
 ```
 
-Ưu điểm:
+#### Độ phức tạp
 
-- Giảm rủi ro mô hình học máy dự đoán sai trong các trường hợp nghiệp vụ rõ ràng.
-- Tăng khả năng giải thích.
-- Phù hợp với hệ thống quản lý sinh viên thực tế.
+| Thao tác | Độ phức tạp |
+|----------|-------------|
+| Thêm cảnh báo | `O(log N)` |
+| Cập nhật điểm rủi ro | `O(log N)` |
+| Lấy cảnh báo ưu tiên cao nhất | `O(log N)` |
+| Tra cứu vị trí theo MSSV | `O(1)` nhờ bảng băm |
+
+---
+
+### 6.6. Hướng mở rộng: giải thuật học máy
+
+Nếu nhà trường có dữ liệu lịch sử đủ lớn và có nhãn sinh viên thôi học, hệ thống có thể mở rộng bằng mô hình học máy.
+
+- **Đầu vào:** vector đặc trưng của sinh viên.
+- **Đầu ra:** xác suất thôi học.
+
+Các mô hình có thể dùng:
+
+| Mô hình | Đặc điểm |
+|---------|----------|
+| Logistic Regression | Đơn giản, dễ giải thích |
+| Decision Tree | Trực quan, dễ hiểu |
+| Random Forest | Mạnh, phù hợp dữ liệu bảng |
+| Gradient Boosting | Hiệu suất cao |
+| XGBoost / LightGBM | Phù hợp bài toán phân loại dữ liệu có cấu trúc |
+
+**Ưu điểm:** tự học từ dữ liệu lịch sử, có thể phát hiện các mẫu phức tạp hơn luật thủ công, có thể cải thiện theo thời gian nếu có phản hồi can thiệp.
+
+**Nhược điểm:** cần dữ liệu lịch sử đủ lớn, dữ liệu thôi học thường mất cân bằng, kết quả khó giải thích hơn rule-based, cần đánh giá bằng precision, recall, F1-score, PR-AUC, top-k recall.
+
+**Mô hình kết hợp:** hướng thực tế là kết hợp rule-based và học máy.
+
+```text
+final_risk_score = 0.6 * ml_risk_score + 0.4 * rule_based_risk_score
+```
+
+Hoặc dùng luật để hiệu chỉnh:
+
+```text
+Nếu sinh viên nợ học phí nghiêm trọng hoặc vắng học quá cao,
+nâng mức cảnh báo lên ít nhất mức CAO.
+```
+
+Tuy nhiên, trong phạm vi môn Cấu trúc dữ liệu và Giải thuật, phần học máy chỉ nên xem là hướng mở rộng. Phần trọng tâm vẫn nên là: rule-based scoring, heap / top-k, chuỗi thời gian, đồ thị, hàng đợi ưu tiên.
+
+---
+
+### 6.7. Bảng tổng hợp giải thuật đề xuất
+
+| Giải thuật | Mục tiêu | Cấu trúc dữ liệu | Độ phức tạp |
+|------------|----------|------------------|-------------|
+| Rule-based scoring | Tính điểm rủi ro | Mảng luật | `O(R)` mỗi sinh viên |
+| Tính điểm hàng loạt | Tính điểm cho N sinh viên | Ma trận đặc trưng | `O(N·R)` |
+| Top-k bằng heap | Chọn k sinh viên rủi ro cao nhất | Min-heap kích thước k | `O(N log k)` |
+| Sắp xếp danh sách cảnh báo | Xếp hạng toàn bộ | Mảng | `O(N log N)` |
+| Đếm chuỗi giảm GPA | Phát hiện xu hướng giảm | Mảng chuỗi thời gian | `O(T)` |
+| Prefix sum | Tính trung bình theo đoạn học kỳ | Mảng tổng tiền tố | `O(T)` tiền xử lý, `O(1)` truy vấn |
+| BFS / DFS | Phát hiện sinh viên cô lập | Đồ thị danh sách kề | `O(V + E)` |
+| Indexed heap | Cập nhật điểm rủi ro động | Heap + bảng băm | `O(log N)` |
+| Lazy heap | Cập nhật cảnh báo đơn giản hơn | Heap + dict | `O(log N)` mỗi lần đẩy |
+| Machine learning | Dự đoán xác suất thôi học | Feature matrix | Phụ thuộc mô hình |
+
+---
+
+### 6.8. Quy trình giải thuật tổng thể
+
+Hệ thống có thể được mô tả bằng quy trình sau:
+
+```text
+Bước 1: Thu thập dữ liệu sinh viên
+Bước 2: Trích xuất đặc trưng
+Bước 3: Tính điểm rủi ro bằng luật
+Bước 4: Phân tích chuỗi thời gian
+Bước 5: Phân tích đồ thị quan hệ xã hội
+Bước 6: Tổng hợp điểm rủi ro
+Bước 7: Lọc cảnh báo trùng
+Bước 8: Đưa cảnh báo vào heap
+Bước 9: Chọn top-k sinh viên ưu tiên can thiệp
+Bước 10: Ghi nhận can thiệp và cập nhật mô hình
+```
+
+Mã giả tổng thể:
+
+```text
+function run_alert_system(students, k):
+    alerts = []
+    opened_alerts = empty set
+
+    for student in students:
+        features = extract_features(student)
+        risk_score, reasons = compute_risk(features)
+
+        trend_alert = analyze_time_series(features.gpa_history)
+        social_alert = analyze_social_graph(student.mssv)
+
+        if trend_alert:
+            risk_score = min(100, risk_score + 10)
+            reasons.append("GPA có xu hướng giảm liên tục")
+
+        if social_alert:
+            risk_score = min(100, risk_score + 10)
+            reasons.append("Sinh viên có dấu hiệu bị cô lập")
+
+        if risk_score >= ALERT_THRESHOLD:
+            if student.mssv not in opened_alerts:
+                alerts.append((student.mssv, risk_score))
+                opened_alerts.add(student.mssv)
+
+    top_alerts = top_k_alerts(alerts, k)
+    return top_alerts
+```
+
+---
+
+### 6.9. Đề xuất phạm vi cho báo cáo cá nhân
+
+Nếu đây là báo cáo cá nhân môn Cấu trúc dữ liệu và Giải thuật, nên chọn các giải thuật sau để cài đặt minh họa:
+
+```text
+1. Rule-based scoring
+2. Top-k bằng heap
+3. Phát hiện GPA giảm bằng mảng chuỗi thời gian
+4. Phát hiện sinh viên cô lập bằng BFS trên đồ thị
+5. Hàng đợi ưu tiên hoặc indexed heap
+```
+
+Các phần như machine learning, XGBoost, Random Forest, deep learning chỉ nên để ở mục hướng phát triển, không nên làm trọng tâm.
+
+---
+
+### 6.10. Kết luận phần giải thuật
+
+Giải thuật đề xuất của hệ thống không chỉ là một mô hình dự đoán duy nhất, mà là một quy trình kết hợp nhiều giải thuật:
+
+```text
+Tính điểm rủi ro bằng luật
+Phân tích xu hướng bằng mảng chuỗi thời gian
+Phân tích cô lập bằng đồ thị danh sách kề
+Xếp hạng cảnh báo bằng heap
+Cập nhật cảnh báo bằng hàng đợi ưu tiên
+```
+
+Cách tiếp cận này giúp hệ thống: dễ giải thích, dễ triển khai, phù hợp với dữ liệu giáo dục, tận dụng được các cấu trúc dữ liệu và giải thuật cơ bản, và có thể mở rộng sang học máy trong tương lai.
+
+> **Tóm tắt:** Hệ thống đề xuất sử dụng giải thuật rule-based scoring để tính điểm rủi ro cho từng sinh viên. Sau đó, heap được sử dụng để xếp hạng cảnh báo và chọn top-k sinh viên cần ưu tiên can thiệp. Mảng chuỗi thời gian được dùng để phát hiện xu hướng giảm GPA hoặc tăng tỷ lệ vắng học. Đồ thị danh sách kề được dùng để phát hiện sinh viên bị cô lập. Hướng mở rộng của hệ thống là kết hợp với mô hình học máy nếu có đủ dữ liệu lịch sử.
 
 ---
 
