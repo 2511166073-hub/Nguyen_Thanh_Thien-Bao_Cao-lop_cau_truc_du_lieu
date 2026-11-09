@@ -137,7 +137,170 @@ Hệ thống có thể thu thập các nhóm dữ liệu sau.
 
 Nhóm dữ liệu quan hệ xã hội có thể biểu diễn bằng đồ thị để phân tích mức độ kết nối, sự cô lập hoặc ảnh hưởng nhóm đối với nguy cơ thôi học.
 
+### 4.7. Dữ liệu sự kiện hỗ trợ và can thiệp
+
+Nhóm dữ liệu này ghi nhận các lần nhà trường đã tiếp cận, hỗ trợ hoặc can thiệp sinh viên.
+
+Trường có thể bao gồm:
+
+- Mã sinh viên
+- Ngày tạo cảnh báo
+- Ngày can thiệp
+- Người phụ trách can thiệp
+- Loại can thiệp
+- Nội dung hỗ trợ
+- Kết quả ban đầu
+- Trạng thái sau can thiệp
+- Ghi chú của cố vấn học tập
+
+**Ví dụ các loại can thiệp:**
+
+- Nhắc nhở học tập
+- Mời gặp cố vấn học tập
+- Hỗ trợ học phí
+- Giới thiệu học bổng
+- Xếp nhóm học tập
+- Tư vấn tâm lý
+- Liên hệ gia đình
+
+**Vai trò:**
+
+- Giúp theo dõi sinh viên đã được hỗ trợ hay chưa
+- Tránh tạo cảnh báo trùng lặp
+- Đánh giá loại can thiệp nào có hiệu quả
+- Cung cấp dữ liệu phản hồi để cải thiện hệ thống
+
+  ### 4.8. Dữ liệu trạng thái và kết quả của sinh viên
+
+Nhóm dữ liệu này cho biết kết quả thực tế của sinh viên sau mỗi học kỳ hoặc sau khi được can thiệp.
+
+**Các trạng thái có thể bao gồm:**
+
+- Tiếp tục học
+- Nghỉ học tạm thời
+- Bảo lưu
+- Bị cảnh báo học vụ
+- Buộc thôi học
+- Tự thôi học
+- Tốt nghiệp
+
+**Vai trò:**
+
+- Dùng để đánh giá hiệu quả dự đoán của hệ thống
+- Xác định sinh viên nào thực sự có rủi ro cao
+- Nếu mở rộng bằng học máy, đây là dữ liệu nhãn để huấn luyện mô hình
+- Giúp đo các chỉ số như recall, precision, F1-score hoặc top-k recall
+
+**Ví dụ:**
+
+| MSSV | Học kỳ | Trạng thái |
+|------|--------|------------|
+| SV001 | 20252 | Tiếp tục học |
+| SV002 | 20252 | Tự thôi học |
+| SV003 | 20252 | Bảo lưu |
+| SV004 | 20252 | Tiếp tục học |
+
+### 4.9. Ánh xạ dữ liệu sang cấu trúc xử lý
+
+Không phải toàn bộ dữ liệu thô đều được đưa trực tiếp vào thuật toán. Hệ thống cần chuyển dữ liệu thành các cấu trúc phù hợp cho từng bài toán.
+
+| Nhóm dữ liệu | Dữ liệu ví dụ | Cấu trúc xử lý đề xuất | Bài toán sử dụng |
+|--------------|---------------|------------------------|------------------|
+| Thông tin cá nhân | MSSV, họ tên, lớp | Bảng băm `dict` | Tra cứu hồ sơ sinh viên |
+| Kết quả học tập | GPA, số môn rớt, tín chỉ | Ma trận đặc trưng | Tính điểm rủi ro |
+| Dữ liệu học tập theo học kỳ | GPA các kỳ, số môn rớt các kỳ | Mảng chuỗi thời gian | Phát hiện xu hướng giảm |
+| Chuyên cần | Tỷ lệ vắng, số buổi nghỉ | Mảng chuỗi thời gian | Phát hiện vắng tăng dần |
+| Tài chính | Nợ học phí, thời gian nợ | Mảng đặc trưng / chuỗi thời gian | Đánh giá áp lực tài chính |
+| Hoạt động | Điểm rèn luyện, câu lạc bộ | Ma trận đặc trưng | Đánh giá mức độ tham gia |
+| Quan hệ xã hội | Bạn cùng lớp, nhóm học tập, câu lạc bộ | Đồ thị danh sách kề | Phát hiện sinh viên cô lập |
+| Cảnh báo | MSSV, điểm rủi ro, học kỳ | Heap / indexed heap | Xếp hạng ưu tiên can thiệp |
+| Lịch sử can thiệp | Ngày hỗ trợ, loại hỗ trợ | Danh sách liên kết / bảng ghi | Theo dõi hiệu quả can thiệp |
+| Chống trùng cảnh báo | MSSV đã có cảnh báo trong kỳ | Tập hợp `set` | Tránh tạo cảnh báo trùng |
+
+### 4.10. Ví dụ biểu diễn dữ liệu trong Python
+
+ **Hồ sơ sinh viên — bảng băm:**
+
+```python
+students = {
+    "SV001": {
+        "name": "Nguyễn Văn A",
+        "class": "CA3",
+        "policy": "Không",
+        "economic_status": "Khó khăn",
+    },
+    "SV002": {
+        "name": "Trần Thị B",
+        "class": "CA3",
+        "policy": "Có",
+        "economic_status": "Ổn định",
+    }
+}
+```
+
+**Đặc trưng dùng để tính điểm rủi ro:**
+
+```python
+features = {
+    "SV001": {
+        "gpa": 1.8,
+        "failed": 4,
+        "absent_rate": 0.38,
+        "tuition_debt": 9000000,
+        "activity_score": 12,
+        "credit_progress": 0.40,
+        "days_no_advisor": 95
+    },
+    "SV002": {
+        "gpa": 3.2,
+        "failed": 0,
+        "absent_rate": 0.05,
+        "tuition_debt": 0,
+        "activity_score": 85,
+        "credit_progress": 0.95,
+        "days_no_advisor": 10
+    }
+}
+```
+
+ **Dữ liệu chuỗi thời gian:**
+
+```python
+time_series = {
+    "SV001": {
+        "semester": ["20241", "20242", "20251", "20252"],
+        "gpa": [3.2, 2.8, 2.2, 2.0],
+        "failed": [0, 1, 3, 4],
+        "absent_rate": [0.05, 0.12, 0.25, 0.38]
+    }
+}
+```
+
+ **Đồ thị quan hệ xã hội:**
+
+```python
+social_graph = {
+    "SV001": ["SV002", "SV003"],
+    "SV002": ["SV001", "SV003"],
+    "SV003": ["SV001", "SV002"],
+    "SV004": ["SV005"],
+    "SV005": ["SV004"],
+    "SV006": []
+}
+```
+
+**Hàng đợi ưu tiên cảnh báo:**
+
+```python
+alerts = [
+    ("SV001", 100),
+    ("SV002", 25),
+    ("SV003", 68),
+    ("SV004", 88)
+]
+```
 ---
+
 
 ## 5. Cấu trúc dữ liệu đề xuất
 
