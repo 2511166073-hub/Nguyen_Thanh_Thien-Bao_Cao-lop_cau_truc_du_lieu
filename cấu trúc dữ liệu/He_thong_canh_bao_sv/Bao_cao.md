@@ -1724,80 +1724,22 @@ Can thiệp và phản hồi
 ---
 
 ### 7.2. Sơ đồ kiến trúc tổng thể
+```mermaid
+flowchart TD
+    A["📥 NGUỒN DỮ LIỆU<br/>Phòng đào tạo · Công tác sinh viên · Tài chính<br/>Điểm danh · Portal · Câu lạc bộ · Cố vấn học tập"]
+    B["🧹 THU THẬP VÀ LÀM SẠCH DỮ LIỆU<br/>Lấy dữ liệu theo học kỳ / theo đợt<br/>Xử lý thiếu, trùng, sai định dạng"]
+    C["🗄️ LƯU TRỮ<br/>CSDL quan hệ: students, grades, attendance,<br/>finance, activities, support_events, alerts, interventions"]
+    D["🧩 TRÍCH XUẤT ĐẶC TRƯNG<br/>Bảng băm hồ sơ · Ma trận đặc trưng<br/>Mảng chuỗi thời gian · Đồ thị quan hệ xã hội"]
+    E["⚙️ ĐỘNG CƠ TÍNH ĐIỂM RỦI RO<br/>Rule-based scoring · Phân tích xu hướng GPA/vắng<br/>Phân tích đồ thị cô lập · Tùy chọn: Machine Learning"]
+    F["🚨 CẢNH BÁO VÀ XẾP HẠNG<br/>Tạo alert · Chống trùng cảnh báo<br/>Đưa vào heap / hàng đợi ưu tiên · Chọn top-k"]
+    G["📊 DASHBOARD CHO CỐ VẤN / PHÒNG CTSV<br/>Danh sách sinh viên rủi ro cao<br/>Lý do cảnh báo · Hành động đề xuất"]
+    H["🤝 CAN THIỆP VÀ PHẢN HỒI<br/>Cố vấn liên hệ sinh viên<br/>Hỗ trợ tài chính, học tập, tâm lý · Ghi nhận kết quả"]
+    I["📈 ĐÁNH GIÁ VÀ CẢI THIỆN<br/>Precision, recall, F1-score, top-k recall<br/>Hiệu quả can thiệp · Cập nhật luật / mô hình"]
 
-```text
-+-------------------------------------------------------------+
-|                         NGUỒN DỮ LIỆU                       |
-|  Phòng đào tạo | Công tác sinh viên | Tài chính | Điểm danh |
-|  Portal sinh viên | Câu lạc bộ | Cố vấn học tập             |
-+-------------------------------------------------------------+
-                              |
-                              v
-+-------------------------------------------------------------+
-|                  THU THẬP VÀ LÀM SẠCH DỮ LIỆU                |
-|  - Lấy dữ liệu theo học kỳ / theo đợt                        |
-|  - Xử lý giá trị thiếu, trùng, sai định dạng                 |
-+-------------------------------------------------------------+
-                              |
-                              v
-+-------------------------------------------------------------+
-|                         LƯU TRỮ                              |
-|  Cơ sở dữ liệu quan hệ: students, grades, attendance,       |
-|  finance, activities, support_events, alerts, interventions |
-+-------------------------------------------------------------+
-                              |
-                              v
-+-------------------------------------------------------------+
-|                    TRÍCH XUẤT ĐẶC TRƯNG                      |
-|  - Bảng băm hồ sơ sinh viên                                  |
-|  - Ma trận đặc trưng                                         |
-|  - Mảng chuỗi thời gian                                      |
-|  - Đồ thị quan hệ xã hội                                     |
-+-------------------------------------------------------------+
-                              |
-                              v
-+-------------------------------------------------------------+
-|                    ĐỘNG CƠ TÍNH ĐIỂM RỦI RO                  |
-|  - Rule-based scoring                                        |
-|  - Phân tích xu hướng GPA / vắng học                         |
-|  - Phân tích đồ thị cô lập                                   |
-|  - Tùy chọn: machine learning                                |
-+-------------------------------------------------------------+
-                              |
-                              v
-+-------------------------------------------------------------+
-|                     CẢNH BÁO VÀ XẾP HẠNG                     |
-|  - Tạo alert                                                 |
-|  - Chống trùng cảnh báo                                      |
-|  - Đưa vào heap / hàng đợi ưu tiên                           |
-|  - Chọn top-k sinh viên cần can thiệp                        |
-+-------------------------------------------------------------+
-                              |
-                              v
-+-------------------------------------------------------------+
-|              DASHBOARD CHO CỐ VẤN / PHÒNG CTSV               |
-|  - Danh sách sinh viên rủi ro cao                            |
-|  - Lý do cảnh báo                                            |
-|  - Hành động đề xuất                                         |
-+-------------------------------------------------------------+
-                              |
-                              v
-+-------------------------------------------------------------+
-|                    CAN THIỆP VÀ PHẢN HỒI                    |
-|  - Cố vấn liên hệ sinh viên                                  |
-|  - Hỗ trợ tài chính, học tập, tâm lý                         |
-|  - Ghi nhận kết quả                                          |
-+-------------------------------------------------------------+
-                              |
-                              v
-+-------------------------------------------------------------+
-|                  ĐÁNH GIÁ VÀ CẢI THIỆN                       |
-|  - Precision, recall, F1-score, top-k recall                 |
-|  - Hiệu quả can thiệp                                        |
-|  - Cập nhật luật / mô hình                                   |
-+-------------------------------------------------------------+
+    A --> B --> C --> D --> E --> F --> G --> H --> I
+    I -.->|Phản hồi cải thiện| E
+    I -.->|Cập nhật luật / mô hình| F
 ```
-
 ---
 
 ### 7.3. Mô tả các tầng trong kiến trúc
