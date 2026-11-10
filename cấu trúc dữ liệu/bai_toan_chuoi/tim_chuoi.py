@@ -1,4 +1,3 @@
-``` python
 def tim_chuoi_con(doan_van, chuoi_can_tim):
     """
     Tìm tất cả vị trí xuất hiện của chuoi_can_tim trong doan_van.
@@ -131,4 +130,3 @@ if __name__ == "__main__":
     
     co_chua2 = kiem_tra_chua_chuoi(doan_van, "xyz")
     print(f"Đoạn văn có chứa 'xyz': {co_chua2}")
-  ```
