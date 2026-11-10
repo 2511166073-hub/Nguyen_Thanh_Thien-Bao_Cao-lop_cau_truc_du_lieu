@@ -210,7 +210,7 @@ Duyệt qua từng ký tự, gom vào biến tạm. Khi gặp dấu phẩy `,` t
 
 ```text
 Ký tự:  5  x  -  1  2  3  ,  1  0  6  .  7  ,  1  0  .  8  ,  1  7  :  3  0
-                           ↑                 ↑                 ↑
+                           ↑                ↑             ↑
                         GẶP DẤU ,        GẶP DẤU ,         GẶP DẤU ,
                         → Lưu "5x-123"   → Lưu "106.7"   → Lưu "10.8"
                         → Reset           → Reset          → Reset
