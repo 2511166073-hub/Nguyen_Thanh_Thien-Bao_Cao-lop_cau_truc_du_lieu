@@ -24,4 +24,6 @@ Lớp: CA3 thứ 7
 4. Bài toán chuỗi và ứng dụng đếm biển số xe
    - Cach_lam.md
    - Tim_chuoi.py
+5. Tìm hiểu các bài toán kinh điển
+
 
