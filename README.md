@@ -25,5 +25,22 @@ Lớp: CA3 thứ 7
    - Cach_lam.md
    - Tim_chuoi.py
 5. Tìm hiểu các bài toán kinh điển
+   - Two_Sum_Array (Tìm cặp số có tổng cho trước trong mảng)
+
+   - Reverse_LinkedList (Đảo ngược danh sách liên kết)
+
+   - Balanced_Expression (Kiểm tra biểu thức dấu ngoặc hợp lệ)
+
+   - Merge_Sort (Sắp xếp trộn)
+
+   - Level_Order_Tree (Duyệt cây nhị phân theo mức - BFS)
+
+   - Kth_Largest_Heap (Tìm phần tử lớn thứ K bằng Heap)
+
+   - Graph_DFS (Duyệt đồ thị theo chiều sâu)
+
+   - Count_Islands (Đếm số hòn đảo trên ma trận)
+
+   - Knapsack_DP (Bài toán cái túi 0-1 Quy hoạch động)
 
 
