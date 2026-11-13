@@ -1,4 +1,4 @@
-# Nguyen_Thanh_Thien_2511166073_lop_cau_truc_du_lieu_ca_3_thu_7
+
 Cosem
 # Bài tập Cấu trúc dữ liệu và giải thuật
 
