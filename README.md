@@ -37,10 +37,6 @@ Lớp: CA3 thứ 7
 
    - Kth_Largest_Heap (Tìm phần tử lớn thứ K bằng Heap)
 
-   - Graph_DFS (Duyệt đồ thị theo chiều sâu)
-
-   - Count_Islands (Đếm số hòn đảo trên ma trận)
-
    - Knapsack_DP (Bài toán cái túi 0-1 Quy hoạch động)
 
 
