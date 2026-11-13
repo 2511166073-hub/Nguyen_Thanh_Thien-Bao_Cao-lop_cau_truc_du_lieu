@@ -2,10 +2,6 @@
 Cosem
 # Bài tập Cấu trúc dữ liệu và giải thuật
 
-Sinh viên: Nguyễn Thanh Thiên  
-MSSV: 2511166073  
-Lớp: CA3 thứ 7
-
 ## Cấu trúc dữ liệu
 1. 05 thuật toán tìm kiếm ( với Linear Search và Binary Search )
    - Bao_cao.md
