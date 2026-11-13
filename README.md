@@ -19,8 +19,6 @@ Lớp: CA3 thứ 7
 2. Báo cáo hệ thống cảnh báo sớm sinh viên thôi học
    - Cach_lam.md
    - Tim_chuoi.py
-3. Bài toán thực tế
-   - Main.py
 4. Bài toán chuỗi và ứng dụng đếm biển số xe
    - Cach_lam.md
    - Tim_chuoi.py
